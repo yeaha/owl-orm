@@ -8,5 +8,3 @@ defined('TEST') or define('TEST', true);
 define('TEST_DIR', __DIR__);
 
 require __DIR__.'/../vendor/autoload.php';
-
-\Owl\Application::registerNamespace('\\Tests', __DIR__);
