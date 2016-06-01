@@ -232,7 +232,15 @@ trait Hooks
      */
     protected function getCacheKey($id)
     {
-        $prefix = sprintf('entity:%s@', str_replace('\\', ':', trim($this->class, '\\')));
+        $prefix = $this->hasOption('cache_key')
+        ? $this->getOption('cache_key')
+        : sprintf('entity:%s', str_replace('\\', ':', trim($this->class, '\\')));
+
+        $prefix = $prefix.'@';
+
+        if ($this->hasOption('cache_key_prefix')) {
+            $prefix = $this->getOption('cache_key_prefix').':'.$prefix;
+        }
 
         if (is_array($id)) {
             ksort($id);
