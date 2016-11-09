@@ -1,7 +1,9 @@
 <?php
-
 namespace Owl\DataMapper\DB;
 
+/**
+ * @method static \Owl\DataMapper\DB\Mapper getMapper()
+ */
 class Data extends \Owl\DataMapper\Data
 {
     protected static $mapper = '\Owl\DataMapper\DB\Mapper';
