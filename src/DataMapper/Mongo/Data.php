@@ -1,7 +1,9 @@
 <?php
-
 namespace Owl\DataMapper\Mongo;
 
+/**
+ * @method static \Owl\DataMapper\Mongo\Mapper getMapper()
+ */
 class Data extends \Owl\DataMapper\Data
 {
     protected static $mapper = '\Owl\DataMapper\Mongo\Mapper';

@@ -1,5 +1,4 @@
 <?php
-
 namespace Owl\DataMapper;
 
 class Registry
@@ -64,14 +63,14 @@ class Registry
             return false;
         }
 
-        $key = self::key($class, $id);
+        $key                 = self::key($class, $id);
         $this->members[$key] = $data;
     }
 
     /**
      * 根据类名和主键值，获得缓存结果.
      *
-     * @param string class
+     * @param string $class
      * @param string|int|array $id
      *
      * @return Data|false
@@ -85,8 +84,8 @@ class Registry
         $key = self::key($class, $id);
 
         return isset($this->members[$key])
-             ? $this->members[$key]
-             : false;
+        ? $this->members[$key]
+        : false;
     }
 
     /**
@@ -110,7 +109,7 @@ class Registry
      */
     public function clear()
     {
-        $this->members = array();
+        $this->members = [];
     }
 
     /**
