@@ -50,14 +50,30 @@ abstract class Data implements \JsonSerializable
      */
     protected $dirty = [];
 
-    public function __beforeSave() {}
-    public function __afterSave() {}
-    public function __beforeInsert() {}
-    public function __afterInsert() {}
-    public function __beforeUpdate() {}
-    public function __afterUpdate() {}
-    public function __beforeDelete() {}
-    public function __afterDelete() {}
+    public function __beforeSave()
+    {
+    }
+    public function __afterSave()
+    {
+    }
+    public function __beforeInsert()
+    {
+    }
+    public function __afterInsert()
+    {
+    }
+    public function __beforeUpdate()
+    {
+    }
+    public function __afterUpdate()
+    {
+    }
+    public function __beforeDelete()
+    {
+    }
+    public function __afterDelete()
+    {
+    }
     /**
      * @param array [$values]
      * @param array [$options]
@@ -176,7 +192,7 @@ abstract class Data implements \JsonSerializable
             }
 
             if (!$found) {
-                throw new Exception\UndefinedPropertyException(get_class($this).": Undefined property {$key}");
+                throw new Exception\UndefinedPropertyException(get_class($this) . ": Undefined property {$key}");
             }
         }
 
@@ -187,7 +203,7 @@ abstract class Data implements \JsonSerializable
 
     /**
      * clone新对象
-     * 新对象的主键会被重置
+     * 新对象的主键会被重置.
      */
     public function __clone()
     {
@@ -354,7 +370,7 @@ abstract class Data implements \JsonSerializable
         $path   = (array) $path;
 
         if (!is_array($target)) {
-            throw new Exception\UnexpectedPropertyValueException(get_class($this).": Property {$key} is not complex type");
+            throw new Exception\UnexpectedPropertyValueException(get_class($this) . ": Property {$key} is not complex type");
         }
 
         \Owl\array_set_in($target, $path, $value, $push);
@@ -389,7 +405,7 @@ abstract class Data implements \JsonSerializable
         $path   = (array) $path;
 
         if (!is_array($target)) {
-            throw new Exception\UnexpectedPropertyValueException(get_class($this).": Property {$key} is not complex type");
+            throw new Exception\UnexpectedPropertyValueException(get_class($this) . ": Property {$key} is not complex type");
         }
 
         \Owl\array_unset_in($target, $path);
@@ -646,13 +662,13 @@ abstract class Data implements \JsonSerializable
     protected function prepareSet($key, $force = false)
     {
         if (!$attribute = static::getMapper()->getAttribute($key)) {
-            throw new Exception\UndefinedPropertyException(get_class($this).": Undefined property {$key}");
+            throw new Exception\UndefinedPropertyException(get_class($this) . ": Undefined property {$key}");
         }
 
         if ($attribute['deprecated']) {
-            throw new Exception\DeprecatedPropertyException(get_class($this).": Property {$key} is deprecated");
+            throw new Exception\DeprecatedPropertyException(get_class($this) . ": Property {$key} is deprecated");
         } elseif (!$force && $attribute['refuse_update'] && !$this->isFresh()) {
-            throw new Exception\RefuseUpdatePropertyException(get_class($this).": Property {$key} refuse update");
+            throw new Exception\RefuseUpdatePropertyException(get_class($this) . ": Property {$key} refuse update");
         }
 
         return $attribute;
@@ -666,11 +682,11 @@ abstract class Data implements \JsonSerializable
     protected function prepareGet($key)
     {
         if (!$attribute = static::getMapper()->getAttribute($key)) {
-            throw new Exception\UndefinedPropertyException(get_class($this).": Undefined property {$key}");
+            throw new Exception\UndefinedPropertyException(get_class($this) . ": Undefined property {$key}");
         }
 
         if ($attribute['deprecated']) {
-            throw new Exception\DeprecatedPropertyException(get_class($this).": Property {$key} is deprecated");
+            throw new Exception\DeprecatedPropertyException(get_class($this) . ": Property {$key} is deprecated");
         }
 
         return $attribute;
@@ -720,6 +736,7 @@ abstract class Data implements \JsonSerializable
      * @param mixed $id
      *
      * @return static
+     *
      * @throws Exception\DataNotFoundException
      */
     public static function findOrFail($id)
@@ -729,6 +746,36 @@ abstract class Data implements \JsonSerializable
         }
 
         throw new \Owl\DataMapper\Exception\DataNotFoundException();
+    }
+
+    /**
+     * 获取单条数据，数据不存在则创建新对象
+     *
+     * @param mixed $id
+     *
+     * @return static
+     */
+    public static function findOrCreate($id)
+    {
+        if ($data = static::find($id)) {
+            return $data;
+        }
+
+        if (!is_array($id)) {
+            $primary_keys = static::getMapper()->getPrimaryKey();
+
+            if (count($primary_keys) > 1) {
+                throw new \Owl\DataMapper\Exception\PropertyException(get_called_class() . ': Illegal id value');
+            }
+
+            $props = [
+                $primary_keys[0] => $id,
+            ];
+        } else {
+            $props = $id;
+        }
+
+        return new static($props);
     }
 
     /**
