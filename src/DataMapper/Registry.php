@@ -3,6 +3,8 @@ namespace Owl\DataMapper;
 
 class Registry
 {
+    use \Owl\Traits\Singleton;
+
     /**
      * 是否开启DataMapper的Data注册表功能.
      *
@@ -122,6 +124,7 @@ class Registry
      */
     private static function key($class, array $id)
     {
+        $class = strtolower(ltrim($class, '\\'));
         ksort($id);
 
         $key = '';
@@ -133,12 +136,5 @@ class Registry
         }
 
         return $class . '@' . $key;
-    }
-
-    private static $instance;
-
-    public static function getInstance()
-    {
-        return self::$instance ?: (self::$instance = new self());
     }
 }
