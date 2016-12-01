@@ -761,21 +761,9 @@ abstract class Data implements \JsonSerializable
             return $data;
         }
 
-        if (!is_array($id)) {
-            $primary_keys = static::getMapper()->getPrimaryKey();
+        $id = static::getMapper()->normalizeID($id);
 
-            if (count($primary_keys) > 1) {
-                throw new \Owl\DataMapper\Exception\PropertyException(get_called_class() . ': Illegal id value');
-            }
-
-            $props = [
-                $primary_keys[0] => $id,
-            ];
-        } else {
-            $props = $id;
-        }
-
-        return new static($props);
+        return new static($id);
     }
 
     /**

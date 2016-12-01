@@ -13,7 +13,7 @@ class Service extends \Owl\Service
     {
     }
 
-    public function find($table, $id)
+    public function find($table, array $id)
     {
         $key = $this->keyOfId($id);
 
@@ -24,17 +24,11 @@ class Service extends \Owl\Service
         return $this->data[$table][$key];
     }
 
-    public function insert($table, array $row, $id = null)
+    public function insert($table, array $row, array $id = null)
     {
-        if (!$id) {
-            if (is_array($id)) {
-                foreach ($id as $k => $v) {
-                    if (!$v) {
-                        $id[$k] = StorageSequence::getInstance()->next();
-                    }
-                }
-            } else {
-                $id = StorageSequence::getInstance()->next();
+        foreach ($id as $k => $v) {
+            if (!$v) {
+                $id[$k] = StorageSequence::getInstance()->next();
             }
         }
 
@@ -45,7 +39,7 @@ class Service extends \Owl\Service
         return $id;
     }
 
-    public function update($table, array $row, $id)
+    public function update($table, array $row, array $id)
     {
         if (!$this->find($table, $id)) {
             return false;
@@ -57,7 +51,7 @@ class Service extends \Owl\Service
         return true;
     }
 
-    public function delete($table, $id)
+    public function delete($table, array $id)
     {
         $key = $this->keyOfId($id);
 
@@ -84,12 +78,8 @@ class Service extends \Owl\Service
         }
     }
 
-    protected function keyOfId($id)
+    protected function keyOfId(array $id)
     {
-        if (!is_array($id)) {
-            return $id;
-        }
-
         ksort($id);
 
         return md5(strtolower(json_encode($id)));

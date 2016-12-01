@@ -1,14 +1,13 @@
 <?php
-
 namespace Owl\DataMapper\Cache;
 
 trait Memcached
 {
     use Hooks;
 
-    protected function getCache($id)
+    protected function getCache(array $id)
     {
-        $key = $this->getCacheKey($id);
+        $key       = $this->getCacheKey($id);
         $memcached = $this->getCacheService($key);
 
         try {
@@ -26,19 +25,19 @@ trait Memcached
         }
     }
 
-    protected function deleteCache($id)
+    protected function deleteCache(array $id)
     {
-        $key = $this->getCacheKey($id);
+        $key       = $this->getCacheKey($id);
         $memcached = $this->getCacheService($key);
 
         return $memcached->delete($key);
     }
 
-    protected function saveCache($id, array $record, $ttl = null)
+    protected function saveCache(array $id, array $record, $ttl = null)
     {
-        $key = $this->getCacheKey($id);
+        $key       = $this->getCacheKey($id);
         $memcached = $this->getCacheService($key);
-        $ttl = $ttl ?: $this->getCacheTTL();
+        $ttl       = $ttl ?: $this->getCacheTTL();
 
         return $memcached->set($key, \Owl\safe_json_encode($record, JSON_UNESCAPED_UNICODE), $ttl);
     }

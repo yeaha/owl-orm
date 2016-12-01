@@ -59,7 +59,7 @@ class Registry
             return false;
         }
 
-        if (!$id = $data->id()) {
+        if (!$id = $data->id(true)) {
             return false;
         }
 
@@ -71,11 +71,11 @@ class Registry
      * 根据类名和主键值，获得缓存结果.
      *
      * @param string $class
-     * @param string|int|array $id
+     * @param array $id
      *
      * @return Data|false
      */
-    public function get($class, $id)
+    public function get($class, array $id)
     {
         if (!$this->isEnabled()) {
             return false;
@@ -94,7 +94,7 @@ class Registry
      * @param string $class
      * @param mixed  $id
      */
-    public function remove($class, $id)
+    public function remove($class, array $id)
     {
         if (!$this->isEnabled()) {
             return false;
@@ -120,23 +120,19 @@ class Registry
      *
      * @return string
      */
-    private static function key($class, $id)
+    private static function key($class, array $id)
     {
-        $key = '';
-        if (is_array($id)) {
-            ksort($id);
+        ksort($id);
 
-            foreach ($id as $prop => $val) {
-                if ($key) {
-                    $key .= ';';
-                }
-                $key .= "{$prop}:{$val}";
+        $key = '';
+        foreach ($id as $prop => $val) {
+            if ($key) {
+                $key .= ';';
             }
-        } else {
-            $key = $id;
+            $key .= "{$prop}:{$val}";
         }
 
-        return $class.'@'.$key;
+        return $class . '@' . $key;
     }
 
     private static $instance;

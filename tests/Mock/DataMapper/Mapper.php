@@ -1,5 +1,4 @@
 <?php
-
 namespace Tests\Mock\DataMapper;
 
 use Owl\Service;
@@ -8,15 +7,15 @@ class Mapper extends \Owl\DataMapper\Mapper
 {
     public function setAttributes(array $attributes)
     {
-        $options = $this->getOptions();
+        $options               = $this->getOptions();
         $options['attributes'] = $attributes;
 
         $this->options = $this->normalizeOptions($options);
     }
 
-    protected function doFind($id, Service $service = null, $collection = null)
+    protected function doFind(array $id, Service $service = null, $collection = null)
     {
-        $service = $service ?: $this->getService();
+        $service    = $service ?: $this->getService();
         $collection = $collection ?: $this->getCollection();
 
         return $service->find($collection, $id);
@@ -24,15 +23,15 @@ class Mapper extends \Owl\DataMapper\Mapper
 
     protected function doInsert(\Owl\DataMapper\Data $data, Service $service = null, $collection = null)
     {
-        $service = $service ?: $this->getService();
+        $service    = $service ?: $this->getService();
         $collection = $collection ?: $this->getCollection();
-        $record = $this->unpack($data);
+        $record     = $this->unpack($data);
 
-        if (!$service->insert($collection, $record, $data->id())) {
+        if (!$service->insert($collection, $record, $data->id(true))) {
             return false;
         }
 
-        $id = array();
+        $id = [];
         foreach ($this->getPrimaryKey() as $key) {
             if (!isset($record[$key])) {
                 if (!$last_id = $service->getLastId($collection, $key)) {
@@ -47,18 +46,18 @@ class Mapper extends \Owl\DataMapper\Mapper
 
     protected function doUpdate(\Owl\DataMapper\Data $data, Service $service = null, $collection = null)
     {
-        $service = $service ?: $this->getService();
+        $service    = $service ?: $this->getService();
         $collection = $collection ?: $this->getCollection();
-        $record = $this->unpack($data, array('dirty' => true));
+        $record     = $this->unpack($data, ['dirty' => true]);
 
-        return $service->update($collection, $record, $data->id());
+        return $service->update($collection, $record, $data->id(true));
     }
 
     protected function doDelete(\Owl\DataMapper\Data $data, Service $service = null, $collection = null)
     {
-        $service = $service ?: $this->getService();
+        $service    = $service ?: $this->getService();
         $collection = $collection ?: $this->getCollection();
 
-        return $service->delete($collection, $data->id());
+        return $service->delete($collection, $data->id(true));
     }
 }

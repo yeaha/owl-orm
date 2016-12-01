@@ -20,13 +20,13 @@ abstract class Mapper
     /**
      * 根据主键值返回查询到的单条记录.
      *
-     * @param string|int|array $id 主键值
+     * @param array $id 主键值
      * @param Owl\Service [$service] 存储服务连接
      * @param string [$collection] 存储集合名
      *
      * @return array 数据结果
      */
-    abstract protected function doFind($id, \Owl\Service $service = null, $collection = null);
+    abstract protected function doFind(array $id, \Owl\Service $service = null, $collection = null);
 
     /**
      * 插入数据到存储服务
@@ -331,6 +331,7 @@ abstract class Mapper
      */
     public function find($id, Data $data = null)
     {
+        $id       = $this->normalizeID($id);
         $registry = Registry::getInstance();
 
         if (!$data) {
@@ -362,7 +363,7 @@ abstract class Mapper
             return $data;
         }
 
-        return $this->find($data->id(), $data);
+        return $this->find($data->id(true), $data);
     }
 
     /**
@@ -420,7 +421,7 @@ abstract class Mapper
 
         $this->__after('delete', $data);
 
-        Registry::getInstance()->remove($this->class, $data->id());
+        Registry::getInstance()->remove($this->class, $data->id(true));
 
         return true;
     }

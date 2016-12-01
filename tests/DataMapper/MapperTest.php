@@ -1,7 +1,7 @@
 <?php
 namespace Tests\DataMapper;
 
-class DataTest extends \PHPUnit_Framework_TestCase
+class MapperTest extends \PHPUnit_Framework_TestCase
 {
     protected $class = '\Tests\Mock\DataMapper\Data';
 
