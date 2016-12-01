@@ -1,12 +1,11 @@
 <?php
-
 namespace Tests\Mock\DataMapper;
 
-class Service implements \Owl\Service
+class Service extends \Owl\Service
 {
-    protected $data = array();
+    protected $data = [];
 
-    public function __construct(array $config = array())
+    public function __construct(array $config = [])
     {
     }
 
@@ -52,7 +51,7 @@ class Service implements \Owl\Service
             return false;
         }
 
-        $key = $this->keyOfId($id);
+        $key                      = $this->keyOfId($id);
         $this->data[$table][$key] = array_merge($this->data[$table][$key], $row);
 
         return true;
@@ -79,9 +78,9 @@ class Service implements \Owl\Service
     public function clear($table = null)
     {
         if ($table) {
-            $this->data[$table] = array();
+            $this->data[$table] = [];
         } else {
-            $this->data = array();
+            $this->data = [];
         }
     }
 
