@@ -1,5 +1,4 @@
 <?php
-
 namespace Owl\DataMapper\Cache;
 
 /**
@@ -45,14 +44,14 @@ trait Hooks
      *
      * @return array|false
      */
-    abstract protected function getCache($id);
+    abstract protected function getCache(array $id);
 
     /**
      * @param mixed $id
      *
      * @return bool
      */
-    abstract protected function deleteCache($id);
+    abstract protected function deleteCache(array $id);
 
     /**
      * @param mixed $id
@@ -61,7 +60,7 @@ trait Hooks
      *
      * @return bool
      */
-    abstract protected function saveCache($id, array $record, $ttl = null);
+    abstract protected function saveCache(array $id, array $record, $ttl = null);
 
     /**
      * create cache after save new data, if cache policy set.
@@ -71,12 +70,11 @@ trait Hooks
     protected function __afterInsert(\Owl\DataMapper\Data $data)
     {
         $policy = $this->getCachePolicy();
-
-        $id = $data->id();
+        $id     = $data->id(true);
 
         if ($policy['insert']) {
             $record = $this->unpack($data);
-            $record = $this->normalizeCacheRecord($record);
+            $record = $this->removeNullValues($record);
 
             $this->saveCache($id, $record);
         } elseif ($policy['not_found']) {
@@ -94,15 +92,15 @@ trait Hooks
     protected function __afterUpdate(\Owl\DataMapper\Data $data)
     {
         $policy = $this->getCachePolicy();
+        $id     = $data->id(true);
 
         if ($policy['update']) {
-            $id = $data->id();
             $record = $this->unpack($data);
-            $record = $this->normalizeCacheRecord($record);
+            $record = $this->removeNullValues($record);
 
             $this->saveCache($id, $record);
         } else {
-            $this->deleteCache($data->id());
+            $this->deleteCache($id);
         }
 
         parent::__afterUpdate($data);
@@ -115,7 +113,7 @@ trait Hooks
      */
     protected function __afterDelete(\Owl\DataMapper\Data $data)
     {
-        $this->deleteCache($data->id());
+        $this->deleteCache($data->id(true));
 
         parent::__afterDelete($data);
     }
@@ -129,7 +127,7 @@ trait Hooks
      */
     public function refresh(\Owl\DataMapper\Data $data)
     {
-        $this->deleteCache($data->id());
+        $this->deleteCache($data->id(true));
 
         return parent::refresh($data);
     }
@@ -142,8 +140,8 @@ trait Hooks
     protected function getCachePolicy()
     {
         $defaults = [
-            'insert' => false,
-            'update' => false,
+            'insert'    => false,
+            'update'    => false,
             'not_found' => false,
         ];
 
@@ -155,32 +153,32 @@ trait Hooks
 
         if (is_array($policy)) {
             return array_merge($defaults, $policy);
-        } else {
-            if (DEBUG) {
-                throw new \Exception('Invalid cache policy setting');
-            }
-
-            return $defaults;
         }
+
+        if (DEBUG) {
+            throw new \Exception('Invalid cache policy setting');
+        }
+
+        return $defaults;
     }
 
     /**
      * return record from cache if cache is created, or save data into cache.
      *
-     * @param mixed        $id
+     * @param array        $id
      * @param \Owl\Service $service
      * @param string       $collection
      *
      * @return array
      */
-    protected function doFind($id, \Owl\Service $service = null, $collection = null)
+    protected function doFind(array $id, \Owl\Service $service = null, $collection = null)
     {
         if ($record = $this->getCache($id)) {
             return isset($record['__IS_NOT_FOUND__']) ? false : $record;
         }
 
         if ($record = parent::doFind($id, $service, $collection)) {
-            $record = $this->normalizeCacheRecord($record);
+            $record = $this->removeNullValues($record);
             $this->saveCache($id, $record);
         } else {
             $policy = $this->getCachePolicy();
@@ -188,25 +186,6 @@ trait Hooks
             if ($ttl = $policy['not_found']) {
                 $ttl = is_numeric($ttl) ? (int) $ttl : null;
                 $this->saveCache($id, ['__IS_NOT_FOUND__' => 1], $ttl);
-            }
-        }
-
-        return $record;
-    }
-
-    /**
-     * remove NULL value from record.
-     *
-     * @param array $record
-     *
-     * @return array
-     */
-    protected function normalizeCacheRecord(array $record)
-    {
-        // 值为NULL的字段不用缓存
-        foreach ($record as $key => $val) {
-            if ($val === null) {
-                unset($record[$key]);
             }
         }
 
@@ -226,34 +205,30 @@ trait Hooks
     }
 
     /**
-     * @param mixed $id
+     * @param array $id
      *
      * @return string
      */
-    protected function getCacheKey($id)
+    protected function getCacheKey(array $id)
     {
         $prefix = $this->hasOption('cache_key')
         ? $this->getOption('cache_key')
         : sprintf('entity:%s', str_replace('\\', ':', trim($this->class, '\\')));
 
-        $prefix = $prefix.'@';
+        $prefix = $prefix . '@';
 
         if ($this->hasOption('cache_key_prefix')) {
-            $prefix = $this->getOption('cache_key_prefix').':'.$prefix;
+            $prefix = $this->getOption('cache_key_prefix') . ':' . $prefix;
         }
 
-        if (is_array($id)) {
-            ksort($id);
+        ksort($id);
 
-            $kv = [];
-            foreach ($id as $k => $v) {
-                $kv[] = sprintf('%s:%s', $k, $v);
-            }
-
-            $key = $prefix.implode(':', $kv);
-        } else {
-            $key = $prefix.$id;
+        $kv = [];
+        foreach ($id as $k => $v) {
+            $kv[] = sprintf('%s:%s', $k, $v);
         }
+
+        $key = $prefix . implode(':', $kv);
 
         return strtolower($key);
     }
@@ -264,5 +239,24 @@ trait Hooks
     protected function getCacheTTL()
     {
         return $this->hasOption('cache_ttl') ? $this->getOption('cache_ttl') : 300;
+    }
+
+    /**
+     * remove NULL value from record.
+     *
+     * @param array $record
+     *
+     * @return array
+     */
+    private function removeNullValues(array $record)
+    {
+        // 值为NULL的字段不用缓存
+        foreach ($record as $key => $val) {
+            if ($val === null) {
+                unset($record[$key]);
+            }
+        }
+
+        return $record;
     }
 }

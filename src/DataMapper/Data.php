@@ -53,27 +53,35 @@ abstract class Data implements \JsonSerializable
     public function __beforeSave()
     {
     }
+
     public function __afterSave()
     {
     }
+
     public function __beforeInsert()
     {
     }
+
     public function __afterInsert()
     {
     }
+
     public function __beforeUpdate()
     {
     }
+
     public function __afterUpdate()
     {
     }
+
     public function __beforeDelete()
     {
     }
+
     public function __afterDelete()
     {
     }
+
     /**
      * @param array [$values]
      * @param array [$options]
@@ -761,21 +769,9 @@ abstract class Data implements \JsonSerializable
             return $data;
         }
 
-        if (!is_array($id)) {
-            $primary_keys = static::getMapper()->getPrimaryKey();
+        $id = static::getMapper()->normalizeID($id);
 
-            if (count($primary_keys) > 1) {
-                throw new \Owl\DataMapper\Exception\PropertyException(get_called_class() . ': Illegal id value');
-            }
-
-            $props = [
-                $primary_keys[0] => $id,
-            ];
-        } else {
-            $props = $id;
-        }
-
-        return new static($props);
+        return new static($id);
     }
 
     /**

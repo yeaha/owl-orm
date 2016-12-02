@@ -20,13 +20,13 @@ abstract class Mapper
     /**
      * 根据主键值返回查询到的单条记录.
      *
-     * @param string|int|array $id 主键值
+     * @param array $id 主键值
      * @param Owl\Service [$service] 存储服务连接
      * @param string [$collection] 存储集合名
      *
      * @return array 数据结果
      */
-    abstract protected function doFind($id, \Owl\Service $service = null, $collection = null);
+    abstract protected function doFind(array $id, \Owl\Service $service = null, $collection = null);
 
     /**
      * 插入数据到存储服务
@@ -70,26 +70,42 @@ abstract class Mapper
         $this->options = array_merge($this->normalizeOptions($class::getOptions()), $this->options);
     }
 
-    protected function __beforeSave(\Owl\DataMapper\Data $data) {}
-    protected function __afterSave(\Owl\DataMapper\Data $data) {}
-    protected function __beforeInsert(\Owl\DataMapper\Data $data) {}
-    protected function __afterInsert(\Owl\DataMapper\Data $data) {}
-    protected function __beforeUpdate(\Owl\DataMapper\Data $data) {}
-    protected function __afterUpdate(\Owl\DataMapper\Data $data) {}
-    protected function __beforeDelete(\Owl\DataMapper\Data $data) {}
-    protected function __afterDelete(\Owl\DataMapper\Data $data) {}
+    protected function __beforeSave(\Owl\DataMapper\Data $data)
+    {
+    }
+    protected function __afterSave(\Owl\DataMapper\Data $data)
+    {
+    }
+    protected function __beforeInsert(\Owl\DataMapper\Data $data)
+    {
+    }
+    protected function __afterInsert(\Owl\DataMapper\Data $data)
+    {
+    }
+    protected function __beforeUpdate(\Owl\DataMapper\Data $data)
+    {
+    }
+    protected function __afterUpdate(\Owl\DataMapper\Data $data)
+    {
+    }
+    protected function __beforeDelete(\Owl\DataMapper\Data $data)
+    {
+    }
+    protected function __afterDelete(\Owl\DataMapper\Data $data)
+    {
+    }
     final private function __before($event, \Owl\DataMapper\Data $data)
     {
         $event = ucfirst($event);
-        call_user_func([$data, '__before'.$event]);
-        call_user_func([$this, '__before'.$event], $data);
+        call_user_func([$data, '__before' . $event]);
+        call_user_func([$this, '__before' . $event], $data);
     }
 
     final private function __after($event, \Owl\DataMapper\Data $data)
     {
         $event = ucfirst($event);
-        call_user_func([$data, '__after'.$event]);
-        call_user_func([$this, '__after'.$event], $data);
+        call_user_func([$data, '__after' . $event]);
+        call_user_func([$this, '__after' . $event], $data);
     }
 
     /**
@@ -116,7 +132,7 @@ abstract class Mapper
     public function getOption($key)
     {
         if (!isset($this->options[$key])) {
-            throw new \RuntimeException('Mapper: undefined option "'.$key.'"');
+            throw new \RuntimeException('Mapper: undefined option "' . $key . '"');
         }
 
         return $this->options[$key];
@@ -315,6 +331,7 @@ abstract class Mapper
      */
     public function find($id, Data $data = null)
     {
+        $id       = $this->normalizeID($id);
         $registry = Registry::getInstance();
 
         if (!$data) {
@@ -346,7 +363,7 @@ abstract class Mapper
             return $data;
         }
 
-        return $this->find($data->id(), $data);
+        return $this->find($data->id(true), $data);
     }
 
     /**
@@ -359,7 +376,7 @@ abstract class Mapper
     public function save(Data $data)
     {
         if ($this->isReadonly()) {
-            throw new \RuntimeException($this->class.' is readonly');
+            throw new \RuntimeException($this->class . ' is readonly');
         }
 
         $is_fresh = $data->isFresh();
@@ -371,7 +388,7 @@ abstract class Mapper
 
         $result = $is_fresh ? $this->insert($data) : $this->update($data);
         if (!$result) {
-            throw new \RuntimeException($this->class.' save failed');
+            throw new \RuntimeException($this->class . ' save failed');
         }
 
         $this->__after('save', $data);
@@ -389,7 +406,7 @@ abstract class Mapper
     public function destroy(Data $data)
     {
         if ($this->isReadonly()) {
-            throw new \RuntimeException($this->class.' is readonly');
+            throw new \RuntimeException($this->class . ' is readonly');
         }
 
         if ($data->isFresh()) {
@@ -399,14 +416,42 @@ abstract class Mapper
         $this->__before('delete', $data);
 
         if (!$this->doDelete($data)) {
-            throw new \Exception($this->class.' destroy failed');
+            throw new \Exception($this->class . ' destroy failed');
         }
 
         $this->__after('delete', $data);
 
-        Registry::getInstance()->remove($this->class, $data->id());
+        Registry::getInstance()->remove($this->class, $data->id(true));
 
         return true;
+    }
+
+    /**
+     * 把ID值格式化为数组形式.
+     *
+     * @param mixed $id
+     *
+     * @return array
+     */
+    public function normalizeID($id)
+    {
+        $primary_keys = $this->getPrimaryKey();
+
+        if (!is_array($id)) {
+            $key = $primary_keys[0];
+            $id  = [$key => $id];
+        }
+
+        $result = [];
+        foreach ($primary_keys as $key) {
+            if (!isset($id[$key])) {
+                throw new Exception\UnexpectedPropertyValueException('Illegal id value');
+            }
+
+            $result[$key] = $id[$key];
+        }
+
+        return $result;
     }
 
     /**

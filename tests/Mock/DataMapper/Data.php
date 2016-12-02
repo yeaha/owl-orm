@@ -13,4 +13,9 @@ class Data extends \Owl\DataMapper\Data
     protected static $attributes = [
         'id' => ['type' => 'integer', 'primary_key' => true, 'auto_generate' => true],
     ];
+
+    public static function setMapper(string $mapper_class)
+    {
+        static::$mapper = $mapper_class;
+    }
 }

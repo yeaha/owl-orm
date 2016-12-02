@@ -1,13 +1,12 @@
 <?php
-
 namespace Owl\DataMapper\DB;
 
 class Mapper extends \Owl\DataMapper\Mapper
 {
     public function select(\Owl\Service $service = null, $collection = null)
     {
-        $service = $service ?: $this->getService();
-        $collection = $collection ?: $this->getCollection();
+        $service     = $service ?: $this->getService();
+        $collection  = $collection ?: $this->getCollection();
         $primary_key = $this->getPrimaryKey();
 
         // 只有一个主键，就可以返回以主键为key的数组结果
@@ -30,16 +29,16 @@ class Mapper extends \Owl\DataMapper\Mapper
     public function getBySQLAsIterator($sql, array $parameters = [], \Owl\Service $service = null)
     {
         $service = $service ?: $this->getService();
-        $res = $service->execute($sql, $parameters);
+        $res     = $service->execute($sql, $parameters);
 
         while ($record = $res->fetch()) {
             yield $this->pack($record);
         }
     }
 
-    protected function doFind($id, \Owl\Service $service = null, $collection = null)
+    protected function doFind(array $id, \Owl\Service $service = null, $collection = null)
     {
-        $service = $service ?: $this->getService();
+        $service    = $service ?: $this->getService();
         $collection = $collection ?: $this->getCollection();
 
         $select = $this->select($service, $collection);
@@ -52,9 +51,9 @@ class Mapper extends \Owl\DataMapper\Mapper
 
     protected function doInsert(\Owl\DataMapper\Data $data, \Owl\Service $service = null, $collection = null)
     {
-        $service = $service ?: $this->getService();
+        $service    = $service ?: $this->getService();
         $collection = $collection ?: $this->getCollection();
-        $record = $this->unpack($data);
+        $record     = $this->unpack($data);
 
         if (!$service->insert($collection, $record)) {
             return false;
@@ -75,47 +74,32 @@ class Mapper extends \Owl\DataMapper\Mapper
 
     protected function doUpdate(\Owl\DataMapper\Data $data, \Owl\Service $service = null, $collection = null)
     {
-        $service = $service ?: $this->getService();
+        $service    = $service ?: $this->getService();
         $collection = $collection ?: $this->getCollection();
-        $record = $this->unpack($data, ['dirty' => true]);
+        $record     = $this->unpack($data, ['dirty' => true]);
 
-        list($where, $params) = $this->whereID($service, $data->id());
+        list($where, $params) = $this->whereID($service, $data->id(true));
 
         return $service->update($collection, $record, $where, $params);
     }
 
     protected function doDelete(\Owl\DataMapper\Data $data, \Owl\Service $service = null, $collection = null)
     {
-        $service = $service ?: $this->getService();
+        $service    = $service ?: $this->getService();
         $collection = $collection ?: $this->getCollection();
 
-        list($where, $params) = $this->whereID($service, $data->id());
+        list($where, $params) = $this->whereID($service, $data->id(true));
 
         return $service->delete($collection, $where, $params);
     }
 
-    protected function whereID(\Owl\Service $service, $id)
+    protected function whereID(\Owl\Service $service, array $id)
     {
+        $where       = $params       = [];
         $primary_key = $this->getPrimaryKey();
-        $key_count = count($primary_key);
 
-        if ($key_count === 1 && !is_array($id)) {
-            $key = $primary_key[0];
-            $id = [$key => $id];
-        }
-
-        if (!is_array($id)) {
-            throw new \Exception("{$this->class}: Illegal id value");
-        }
-
-        $where = $params = [];
         foreach ($primary_key as $key) {
-            $where[] = $service->quoteIdentifier($key).' = ?';
-
-            if (!isset($id[$key])) {
-                throw new \Exception("{$this->class}: Illegal id value");
-            }
-
+            $where[]  = $service->quoteIdentifier($key) . ' = ?';
             $params[] = $id[$key];
         }
         $where = implode(' AND ', $where);
