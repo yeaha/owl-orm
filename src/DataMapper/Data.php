@@ -53,27 +53,35 @@ abstract class Data implements \JsonSerializable
     public function __beforeSave()
     {
     }
+
     public function __afterSave()
     {
     }
+
     public function __beforeInsert()
     {
     }
+
     public function __afterInsert()
     {
     }
+
     public function __beforeUpdate()
     {
     }
+
     public function __afterUpdate()
     {
     }
+
     public function __beforeDelete()
     {
     }
+
     public function __afterDelete()
     {
     }
+
     /**
      * @param array [$values]
      * @param array [$options]
