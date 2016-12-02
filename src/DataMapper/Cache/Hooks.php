@@ -74,7 +74,7 @@ trait Hooks
 
         if ($policy['insert']) {
             $record = $this->unpack($data);
-            $record = $this->normalizeCacheRecord($record);
+            $record = $this->removeNullValues($record);
 
             $this->saveCache($id, $record);
         } elseif ($policy['not_found']) {
@@ -96,7 +96,7 @@ trait Hooks
 
         if ($policy['update']) {
             $record = $this->unpack($data);
-            $record = $this->normalizeCacheRecord($record);
+            $record = $this->removeNullValues($record);
 
             $this->saveCache($id, $record);
         } else {
@@ -178,7 +178,7 @@ trait Hooks
         }
 
         if ($record = parent::doFind($id, $service, $collection)) {
-            $record = $this->normalizeCacheRecord($record);
+            $record = $this->removeNullValues($record);
             $this->saveCache($id, $record);
         } else {
             $policy = $this->getCachePolicy();
@@ -186,25 +186,6 @@ trait Hooks
             if ($ttl = $policy['not_found']) {
                 $ttl = is_numeric($ttl) ? (int) $ttl : null;
                 $this->saveCache($id, ['__IS_NOT_FOUND__' => 1], $ttl);
-            }
-        }
-
-        return $record;
-    }
-
-    /**
-     * remove NULL value from record.
-     *
-     * @param array $record
-     *
-     * @return array
-     */
-    protected function normalizeCacheRecord(array $record)
-    {
-        // 值为NULL的字段不用缓存
-        foreach ($record as $key => $val) {
-            if ($val === null) {
-                unset($record[$key]);
             }
         }
 
@@ -258,5 +239,24 @@ trait Hooks
     protected function getCacheTTL()
     {
         return $this->hasOption('cache_ttl') ? $this->getOption('cache_ttl') : 300;
+    }
+
+    /**
+     * remove NULL value from record.
+     *
+     * @param array $record
+     *
+     * @return array
+     */
+    private function removeNullValues(array $record)
+    {
+        // 值为NULL的字段不用缓存
+        foreach ($record as $key => $val) {
+            if ($val === null) {
+                unset($record[$key]);
+            }
+        }
+
+        return $record;
     }
 }
