@@ -35,9 +35,9 @@ trait Apc
         static $prefix;
 
         if (!$prefix) {
-            if (extension('apcu')) {
+            if (extension_loaded('apcu')) {
                 $prefix = 'apcu_';
-            } elseif (extension('apc')) {
+            } elseif (extension_loaded('apc')) {
                 $prefix = 'apc_';
             } else {
                 throw new \Exception('Require APC or APCu extension!');
