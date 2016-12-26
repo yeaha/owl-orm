@@ -90,7 +90,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\Owl\DataMapper\Type\Datetime', $type);
         $this->assertInstanceOf('\Owl\DataMapper\Type\Common', $type);
 
-        $now = new \Datetime();
+        $now = new \DateTimeImmutable();
         $this->assertSame($now, $type->normalize($now, []));
 
         $this->assertInstanceOf('\DatetimeInterface', $type->normalize('now', []));
