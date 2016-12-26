@@ -55,7 +55,7 @@ class Mapper extends \Owl\DataMapper\Mapper
 
     protected function doFind(array $id, \Owl\Service $service = null, $collection = null)
     {
-        $service    = $service ?: $this->getService();
+        $service = $service ?: $this->getService();
         $collection = $collection ?: $this->getCollection();
 
         return $service->findOne($collection, ['_id' => $this->normalizeIDValue($id)]);
@@ -63,10 +63,10 @@ class Mapper extends \Owl\DataMapper\Mapper
 
     protected function doInsert(\Owl\DataMapper\Data $data, \Owl\Service $service = null, $collection = null)
     {
-        $service    = $service ?: $this->getService();
+        $service = $service ?: $this->getService();
         $collection = $collection ?: $this->getCollection();
 
-        $record        = $this->unpack($data);
+        $record = $this->unpack($data);
         $record['_id'] = $this->normalizeIDValue($data->id());
 
         $service->insert($collection, $record);
@@ -78,9 +78,9 @@ class Mapper extends \Owl\DataMapper\Mapper
 
     protected function doUpdate(\Owl\DataMapper\Data $data, \Owl\Service $service = null, $collection = null)
     {
-        $service    = $service ?: $this->getService();
+        $service = $service ?: $this->getService();
         $collection = $collection ?: $this->getCollection();
-        $record     = $this->unpack($data, ['dirty' => true]);
+        $record = $this->unpack($data, ['dirty' => true]);
 
         $new = ['$set' => [], '$unset' => []];
         foreach ($record as $key => $value) {
@@ -104,7 +104,7 @@ class Mapper extends \Owl\DataMapper\Mapper
 
     protected function doDelete(\Owl\DataMapper\Data $data, \Owl\Service $service = null, $collection = null)
     {
-        $service    = $service ?: $this->getService();
+        $service = $service ?: $this->getService();
         $collection = $collection ?: $this->getCollection();
 
         return $service->remove($collection, ['_id' => $this->normalizeIDValue($data)]);

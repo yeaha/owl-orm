@@ -65,7 +65,7 @@ class Registry
             return false;
         }
 
-        $key                 = self::key($class, $id);
+        $key = self::key($class, $id);
         $this->members[$key] = $data;
     }
 
@@ -73,7 +73,7 @@ class Registry
      * 根据类名和主键值，获得缓存结果.
      *
      * @param string $class
-     * @param array $id
+     * @param array  $id
      *
      * @return Data|false
      */

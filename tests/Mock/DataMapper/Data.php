@@ -6,7 +6,7 @@ class Data extends \Owl\DataMapper\Data
     protected static $mapper = '\Tests\Mock\DataMapper\Mapper';
 
     protected static $mapper_options = [
-        'service'    => 'mock.storage',
+        'service' => 'mock.storage',
         'collection' => 'mock.data',
     ];
 

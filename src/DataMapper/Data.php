@@ -16,10 +16,10 @@ abstract class Data implements \JsonSerializable
      * @var array
      */
     protected static $mapper_options = [
-        'service'    => '',    // 存储服务名
+        'service' => '',    // 存储服务名
         'collection' => '',    // 存储集合名
-        'readonly'   => false, // 是否只读
-        'strict'     => false, // 是否所有属性默认开启严格模式
+        'readonly' => false, // 是否只读
+        'strict' => false, // 是否所有属性默认开启严格模式
     ];
 
     /**
@@ -89,7 +89,7 @@ abstract class Data implements \JsonSerializable
     public function __construct(array $values = null, array $options = null)
     {
         $defaults = ['fresh' => true];
-        $options  = $options ? array_merge($defaults, $options) : $defaults;
+        $options = $options ? array_merge($defaults, $options) : $defaults;
 
         $attributes = static::getMapper()->getAttributes();
 
@@ -192,7 +192,7 @@ abstract class Data implements \JsonSerializable
             $found = false;
             foreach (array_keys(static::getMapper()->getAttributes()) as $akey) {
                 if ($key == str_replace('_', '', $akey)) {
-                    $key   = $akey;
+                    $key = $akey;
                     $found = true;
 
                     break;
@@ -217,12 +217,12 @@ abstract class Data implements \JsonSerializable
     {
         $this->fresh = true;
 
-        $mapper     = static::getMapper();
+        $mapper = static::getMapper();
         $attributes = $mapper->getAttributes();
 
         foreach ($this->values as $key => $value) {
             $attribute = $attributes[$key];
-            $type      = Type::factory($attribute['type']);
+            $type = Type::factory($attribute['type']);
 
             if ($attribute['primary_key']) {
                 if ($value = $type->getDefaultValue($attribute)) {
@@ -252,8 +252,8 @@ abstract class Data implements \JsonSerializable
     final public function __pack(array $values, $replace)
     {
         $this->values = $replace ? $values : array_merge($this->values, $values);
-        $this->dirty  = [];
-        $this->fresh  = false;
+        $this->dirty = [];
+        $this->fresh = false;
 
         return $this;
     }
@@ -283,7 +283,7 @@ abstract class Data implements \JsonSerializable
      *
      * @return $this
      *
-     * @throws \Owl\DataMapper\Exception\UndefinedPropertyException       如果属性未定义
+     * @throws \Owl\DataMapper\Exception\UndefinedPropertyException 如果属性未定义
      * @throws \Owl\DataMapper\Exception\UnexpectedPropertyValueException 把null赋值给一个不允许为null的属性
      * @throws \Owl\DataMapper\Exception\UnexpectedPropertyValueException 值没有通过设定的正则表达式检查
      * @throws \Owl\DataMapper\Exception\DeprecatedPropertyException      属性被标记为“废弃”
@@ -292,7 +292,7 @@ abstract class Data implements \JsonSerializable
     public function set($key, $value, array $options = null)
     {
         $defaults = ['force' => false, 'strict' => true];
-        $options  = $options ? array_merge($defaults, $options) : $defaults;
+        $options = $options ? array_merge($defaults, $options) : $defaults;
 
         try {
             $attribute = $this->prepareSet($key, $options['force']);
@@ -348,7 +348,7 @@ abstract class Data implements \JsonSerializable
     public function get($key)
     {
         $attribute = $this->prepareGet($key);
-        $type      = Type::factory($attribute['type']);
+        $type = Type::factory($attribute['type']);
 
         if (!array_key_exists($key, $this->values)) {
             return $type->getDefaultValue($attribute);
@@ -375,7 +375,7 @@ abstract class Data implements \JsonSerializable
         $this->prepareSet($key);
 
         $target = $this->get($key);
-        $path   = (array) $path;
+        $path = (array) $path;
 
         if (!is_array($target)) {
             throw new Exception\UnexpectedPropertyValueException(get_class($this) . ": Property {$key} is not complex type");
@@ -410,7 +410,7 @@ abstract class Data implements \JsonSerializable
         $this->prepareSet($key);
 
         $target = $this->get($key);
-        $path   = (array) $path;
+        $path = (array) $path;
 
         if (!is_array($target)) {
             throw new Exception\UnexpectedPropertyValueException(get_class($this) . ": Property {$key} is not complex type");
@@ -431,7 +431,7 @@ abstract class Data implements \JsonSerializable
     public function getIn($key, $path)
     {
         $target = $this->get($key);
-        $path   = (array) $path;
+        $path = (array) $path;
 
         if (!is_array($target)) {
             return false;
@@ -459,7 +459,7 @@ abstract class Data implements \JsonSerializable
     {
         if ($keys === null) {
             $attributes = static::getMapper()->getAttributes();
-            $keys       = [];
+            $keys = [];
 
             foreach ($attributes as $key => $attribute) {
                 if (!$attribute['protected']) {
@@ -488,10 +488,10 @@ abstract class Data implements \JsonSerializable
     public function toJSON()
     {
         $mapper = static::getMapper();
-        $json   = [];
+        $json = [];
 
         foreach ($this->toArray() as $key => $value) {
-            $attribute  = $mapper->getAttribute($key);
+            $attribute = $mapper->getAttribute($key);
             $json[$key] = Type::factory($attribute['type'])->toJSON($value, $attribute);
         }
 
@@ -553,7 +553,7 @@ abstract class Data implements \JsonSerializable
     public function id($as_array = false)
     {
         $keys = static::getMapper()->getPrimaryKey();
-        $id   = [];
+        $id = [];
 
         foreach ($keys as $key) {
             $id[$key] = $this->get($key);
@@ -610,7 +610,7 @@ abstract class Data implements \JsonSerializable
     public function validate()
     {
         $attributes = static::getMapper()->getAttributes();
-        $keys       = $this->isFresh() ? array_keys($attributes) : array_keys($this->dirty);
+        $keys = $this->isFresh() ? array_keys($attributes) : array_keys($this->dirty);
 
         foreach ($keys as $key) {
             $attribute = $attributes[$key];
@@ -620,7 +620,7 @@ abstract class Data implements \JsonSerializable
             }
 
             $value = $this->get($key);
-            $type  = Type::factory($attribute['type']);
+            $type = Type::factory($attribute['type']);
 
             if ($type->isNull($value)) {
                 if (!$attribute['allow_null']) {
@@ -710,7 +710,7 @@ abstract class Data implements \JsonSerializable
     final protected function change($key, $value, array $attribute = null)
     {
         $attribute = $attribute ?: static::getMapper()->getAttribute($key);
-        $type      = Type::factory($attribute['type']);
+        $type = Type::factory($attribute['type']);
 
         if (array_key_exists($key, $this->values)) {
             if ($value === $this->values[$key]) {
@@ -723,7 +723,7 @@ abstract class Data implements \JsonSerializable
         }
 
         $this->values[$key] = $value;
-        $this->dirty[$key]  = true;
+        $this->dirty[$key] = true;
     }
 
     /**
@@ -800,7 +800,7 @@ abstract class Data implements \JsonSerializable
      */
     final public static function getOptions()
     {
-        $options               = static::$mapper_options;
+        $options = static::$mapper_options;
         $options['attributes'] = static::$attributes;
 
         $called_class = get_called_class();
@@ -808,11 +808,11 @@ abstract class Data implements \JsonSerializable
             return $options;
         }
 
-        $parent_class   = get_parent_class($called_class);
+        $parent_class = get_parent_class($called_class);
         $parent_options = $parent_class::getOptions();
 
         $options['attributes'] = array_merge($parent_options['attributes'], $options['attributes']);
-        $options               = array_merge($parent_options, $options);
+        $options = array_merge($parent_options, $options);
 
         return $options;
     }

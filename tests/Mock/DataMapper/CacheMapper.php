@@ -27,8 +27,8 @@ class CacheMapper extends Mapper
     protected function getCachePolicy()
     {
         return [
-            'insert'    => true,
-            'update'    => true,
+            'insert' => true,
+            'update' => true,
             'not_found' => true,
         ];
     }

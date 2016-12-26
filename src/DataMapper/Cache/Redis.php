@@ -7,7 +7,7 @@ trait Redis
 
     protected function getCache(array $id)
     {
-        $key   = $this->getCacheKey($id);
+        $key = $this->getCacheKey($id);
         $redis = $this->getCacheService($key);
 
         try {
@@ -27,7 +27,7 @@ trait Redis
 
     protected function deleteCache(array $id)
     {
-        $key   = $this->getCacheKey($id);
+        $key = $this->getCacheKey($id);
         $redis = $this->getCacheService($key);
 
         return $redis->delete($key);
@@ -35,9 +35,9 @@ trait Redis
 
     protected function saveCache(array $id, array $record, $ttl = null)
     {
-        $key   = $this->getCacheKey($id);
+        $key = $this->getCacheKey($id);
         $redis = $this->getCacheService($key);
-        $ttl   = $ttl ?: $this->getCacheTTL();
+        $ttl = $ttl ?: $this->getCacheTTL();
 
         return $redis->setex($key, $ttl, \Owl\safe_json_encode($record, JSON_UNESCAPED_UNICODE));
     }

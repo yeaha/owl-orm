@@ -66,34 +66,42 @@ abstract class Mapper
      */
     public function __construct($class)
     {
-        $this->class   = $class;
+        $this->class = $class;
         $this->options = array_merge($this->normalizeOptions($class::getOptions()), $this->options);
     }
 
     protected function __beforeSave(\Owl\DataMapper\Data $data)
     {
     }
+
     protected function __afterSave(\Owl\DataMapper\Data $data)
     {
     }
+
     protected function __beforeInsert(\Owl\DataMapper\Data $data)
     {
     }
+
     protected function __afterInsert(\Owl\DataMapper\Data $data)
     {
     }
+
     protected function __beforeUpdate(\Owl\DataMapper\Data $data)
     {
     }
+
     protected function __afterUpdate(\Owl\DataMapper\Data $data)
     {
     }
+
     protected function __beforeDelete(\Owl\DataMapper\Data $data)
     {
     }
+
     protected function __afterDelete(\Owl\DataMapper\Data $data)
     {
     }
+
     final private function __before($event, \Owl\DataMapper\Data $data)
     {
         $event = ucfirst($event);
@@ -264,7 +272,7 @@ abstract class Mapper
      */
     public function pack(array $record, Data $data = null)
     {
-        $types  = Type::getInstance();
+        $types = Type::getInstance();
         $values = [];
 
         $attributes = $this->getAttributes();
@@ -274,7 +282,7 @@ abstract class Mapper
                 continue;
             }
 
-            $attribute    = $attributes[$key];
+            $attribute = $attributes[$key];
             $values[$key] = $types->get($attribute['type'])->restore($value, $attribute);
         }
 
@@ -282,7 +290,7 @@ abstract class Mapper
             $data->__pack($values, false);
         } else {
             $class = $this->class;
-            $data  = new $class(null, ['fresh' => false]);
+            $data = new $class(null, ['fresh' => false]);
             $data->__pack($values, true);
         }
 
@@ -300,7 +308,7 @@ abstract class Mapper
     public function unpack(Data $data, array $options = null)
     {
         $defaults = ['dirty' => false];
-        $options  = $options ? array_merge($defaults, $options) : $defaults;
+        $options = $options ? array_merge($defaults, $options) : $defaults;
 
         $attributes = $this->getAttributes();
 
@@ -312,7 +320,7 @@ abstract class Mapper
 
             if ($value !== null) {
                 $attribute = $attributes[$key];
-                $value     = Type::factory($attribute['type'])->store($value, $attribute);
+                $value = Type::factory($attribute['type'])->store($value, $attribute);
             }
 
             $record[$key] = $value;
@@ -331,7 +339,7 @@ abstract class Mapper
      */
     public function find($id, Data $data = null)
     {
-        $id       = $this->normalizeID($id);
+        $id = $this->normalizeID($id);
         $registry = Registry::getInstance();
 
         if (!$data) {
@@ -439,7 +447,7 @@ abstract class Mapper
 
         if (!is_array($id)) {
             $key = $primary_keys[0];
-            $id  = [$key => $id];
+            $id = [$key => $id];
         }
 
         $result = [];
@@ -508,11 +516,11 @@ abstract class Mapper
     protected function normalizeOptions(array $options)
     {
         $options = array_merge([
-            'service'    => null,
+            'service' => null,
             'collection' => null,
             'attributes' => [],
-            'readonly'   => false,
-            'strict'     => false,
+            'readonly' => false,
+            'strict' => false,
         ], $options);
 
         $primary_key = [];

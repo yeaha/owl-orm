@@ -101,7 +101,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('\DateTimeImmutable', $type->restore('2014-01-01T00:00:00+0', []));
 
-        $ts   = 1388534400;
+        $ts = 1388534400;
         $time = $type->restore($ts, ['format' => 'U']);
 
         $this->assertInstanceOf('\DateTimeImmutable', $time);
@@ -134,14 +134,14 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     public function testRestoreNull()
     {
         $expect = [
-            'mixed'     => null,
-            'string'    => null,
-            'integer'   => null,
-            'numerci'   => null,
-            'uuid'      => null,
-            'datetime'  => null,
-            'json'      => [],
-            'pg_array'  => [],
+            'mixed' => null,
+            'string' => null,
+            'integer' => null,
+            'numerci' => null,
+            'uuid' => null,
+            'datetime' => null,
+            'json' => [],
+            'pg_array' => [],
             'pg_hstore' => [],
         ];
 

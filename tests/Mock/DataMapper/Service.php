@@ -45,7 +45,7 @@ class Service extends \Owl\Service
             return false;
         }
 
-        $key                      = $this->keyOfId($id);
+        $key = $this->keyOfId($id);
         $this->data[$table][$key] = array_merge($this->data[$table][$key], $row);
 
         return true;

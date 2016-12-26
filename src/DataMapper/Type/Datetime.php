@@ -28,7 +28,7 @@ class Datetime extends Common
     {
         if ($value instanceof \DateTimeInterface) {
             $format = isset($attribute['format']) ? $attribute['format'] : 'c'; // ISO 8601
-            $value  = $value->format($format);
+            $value = $value->format($format);
         }
 
         return $value;

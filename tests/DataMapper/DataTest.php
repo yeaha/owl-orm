@@ -21,7 +21,7 @@ class DataTest extends \PHPUnit_Framework_TestCase
     public function testConstruct()
     {
         $this->setAttributes([
-            'id'  => ['type' => 'integer', 'primary_key' => true, 'auto_generate' => true],
+            'id' => ['type' => 'integer', 'primary_key' => true, 'auto_generate' => true],
             'foo' => ['type' => 'string', 'default' => 'foo'],
             'bar' => ['type' => 'string', 'default' => 'bar', 'allow_null' => true],
         ]);
@@ -48,7 +48,7 @@ class DataTest extends \PHPUnit_Framework_TestCase
 
     public function testClone()
     {
-        $class  = $this->class;
+        $class = $this->class;
         $mapper = $class::getMapper();
 
         $this->setAttributes([
@@ -90,7 +90,7 @@ class DataTest extends \PHPUnit_Framework_TestCase
     public function testSetStrict()
     {
         $this->setAttributes([
-            'id'  => ['type' => 'integer', 'primary_key' => true, 'auto_generate' => true],
+            'id' => ['type' => 'integer', 'primary_key' => true, 'auto_generate' => true],
             'foo' => ['type' => 'string', 'strict' => true],
         ]);
 
@@ -112,11 +112,11 @@ class DataTest extends \PHPUnit_Framework_TestCase
     public function testSetRefuseUpdate()
     {
         $this->setAttributes([
-            'id'  => ['type' => 'integer', 'primary_key' => true, 'auto_generate' => true],
+            'id' => ['type' => 'integer', 'primary_key' => true, 'auto_generate' => true],
             'foo' => ['type' => 'string', 'refuse_update' => true],
         ]);
 
-        $data      = $this->newData();
+        $data = $this->newData();
         $data->foo = 'foo';
 
         $this->assertEquals($data->foo, 'foo');
@@ -134,7 +134,7 @@ class DataTest extends \PHPUnit_Framework_TestCase
     public function testSetSame()
     {
         $this->setAttributes([
-            'id'  => ['type' => 'integer', 'primary_key' => true, 'auto_generate' => true],
+            'id' => ['type' => 'integer', 'primary_key' => true, 'auto_generate' => true],
             'foo' => ['type' => 'string', 'allow_null' => true],
             'bar' => ['type' => 'string'],
         ]);
@@ -180,7 +180,7 @@ class DataTest extends \PHPUnit_Framework_TestCase
     public function testGetObjectValue()
     {
         $this->setAttributes([
-            'id'   => ['type' => 'integer', 'primary_key' => true, 'auto_generate' => true],
+            'id' => ['type' => 'integer', 'primary_key' => true, 'auto_generate' => true],
             'time' => ['type' => 'datetime', 'default' => 'now'],
         ]);
 
@@ -191,7 +191,7 @@ class DataTest extends \PHPUnit_Framework_TestCase
     public function testPick()
     {
         $this->setAttributes([
-            'id'  => ['type' => 'integer', 'primary_key' => true, 'auto_generate' => true],
+            'id' => ['type' => 'integer', 'primary_key' => true, 'auto_generate' => true],
             'foo' => ['type' => 'string', 'protected' => true],
             'bar' => ['type' => 'string'],
         ]);
@@ -262,11 +262,11 @@ class DataTest extends \PHPUnit_Framework_TestCase
     public function testDeprecatedAttribute()
     {
         $this->setAttributes([
-            'id'  => ['type' => 'string', 'primary_key' => true],
+            'id' => ['type' => 'string', 'primary_key' => true],
             'bar' => ['type' => 'string', 'deprecated' => true],
         ]);
 
-        $class  = $this->class;
+        $class = $this->class;
         $mapper = $class::getMapper();
 
         $attributes = $mapper->getAttributes();
@@ -276,13 +276,13 @@ class DataTest extends \PHPUnit_Framework_TestCase
 
         $this->setExpectedExceptionRegExp('\Owl\DataMapper\Exception\DeprecatedPropertyException');
         $data = $this->newData();
-        $bar  = $data->bar;
+        $bar = $data->bar;
     }
 
     public function testSetIn()
     {
         $this->setAttributes([
-            'id'  => ['type' => 'integer', 'primary_key' => true],
+            'id' => ['type' => 'integer', 'primary_key' => true],
             'doc' => ['type' => 'json'],
             'msg' => ['type' => 'string'],
         ]);
@@ -322,7 +322,7 @@ class DataTest extends \PHPUnit_Framework_TestCase
     public function testPushIn()
     {
         $this->setAttributes([
-            'id'  => ['type' => 'integer', 'primary_key' => true],
+            'id' => ['type' => 'integer', 'primary_key' => true],
             'doc' => ['type' => 'json'],
         ]);
 
@@ -346,7 +346,7 @@ class DataTest extends \PHPUnit_Framework_TestCase
     public function testValidateAttributeAllowNull()
     {
         $this->setAttributes([
-            'id'  => ['type' => 'integer', 'primary_key' => true, 'auto_generate' => true],
+            'id' => ['type' => 'integer', 'primary_key' => true, 'auto_generate' => true],
             'foo' => ['type' => 'string'],
             'bar' => ['type' => 'string', 'allow_null' => true],
         ]);
@@ -377,7 +377,7 @@ class DataTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($data->validate());
 
         $this->setAttributes([
-            'id'  => ['type' => 'integer', 'primary_key' => true, 'auto_generate' => true],
+            'id' => ['type' => 'integer', 'primary_key' => true, 'auto_generate' => true],
             'doc' => ['type' => 'json'],
         ]);
 
@@ -393,11 +393,11 @@ class DataTest extends \PHPUnit_Framework_TestCase
     public function testValidateAttributeRegexp()
     {
         $this->setAttributes([
-            'id'  => ['type' => 'integer', 'primary_key' => true, 'auto_generate' => true],
+            'id' => ['type' => 'integer', 'primary_key' => true, 'auto_generate' => true],
             'foo' => ['type' => 'string', 'regexp' => '/^a.+z$/'],
         ]);
 
-        $data      = $this->newData();
+        $data = $this->newData();
         $data->foo = 'abc';
 
         try {
@@ -413,11 +413,11 @@ class DataTest extends \PHPUnit_Framework_TestCase
     public function testValidateComplexTypeProperty()
     {
         $this->setAttributes([
-            'id'  => ['type' => 'integer', 'primary_key' => true, 'auto_generate' => true],
+            'id' => ['type' => 'integer', 'primary_key' => true, 'auto_generate' => true],
             'doc' => [
-                'type'       => 'json',
+                'type' => 'json',
                 'allow_null' => true,
-                'schema'     => [
+                'schema' => [
                     'a' => ['type' => 'integer'],
                     'b' => ['type' => 'integer', 'required' => false],
                     'c' => [
@@ -460,8 +460,8 @@ class DataTest extends \PHPUnit_Framework_TestCase
     public function testGetterSetter()
     {
         $this->setAttributes([
-            'id'      => ['type' => 'integer', 'primary_key' => true, 'auto_generate' => true],
-            'foo'     => ['type' => 'string'],
+            'id' => ['type' => 'integer', 'primary_key' => true, 'auto_generate' => true],
+            'foo' => ['type' => 'string'],
             'foo_bar' => ['type' => 'string'],
         ]);
 
@@ -492,16 +492,16 @@ class DataTest extends \PHPUnit_Framework_TestCase
     public function testAllowTags()
     {
         $this->setAttributes([
-            'id'  => ['type' => 'integer', 'primary_key' => true, 'auto_generate' => true],
+            'id' => ['type' => 'integer', 'primary_key' => true, 'auto_generate' => true],
             'foo' => ['type' => 'string', 'allow_tags' => true],
         ]);
 
-        $data      = $this->newData();
+        $data = $this->newData();
         $data->foo = '<h1>test</h1>';
         $this->assertTrue($data->validate());
 
         $this->setAttributes([
-            'id'  => ['type' => 'integer', 'primary_key' => true, 'auto_generate' => true],
+            'id' => ['type' => 'integer', 'primary_key' => true, 'auto_generate' => true],
             'foo' => ['type' => 'string'],
         ]);
 
@@ -542,16 +542,17 @@ class DataTest extends \PHPUnit_Framework_TestCase
         $class::findOrCreate('9f8e2ba8-fbb2-49d5-9f39-83af4fb52bf9');
     }
 }
+
 namespace Tests\Mock\DataMapper;
 
 class FooData extends \Owl\DataMapper\Data
 {
     protected static $mapper_options = [
-        'service'    => 'foo.service',
+        'service' => 'foo.service',
         'collection' => 'foo.collection',
     ];
     protected static $attributes = [
-        'id'  => ['type' => 'integer', 'primary_key' => true, 'auto_generate' => true],
+        'id' => ['type' => 'integer', 'primary_key' => true, 'auto_generate' => true],
         'foo' => ['type' => 'string'],
     ];
 }
@@ -559,7 +560,7 @@ class FooData extends \Owl\DataMapper\Data
 class BarData extends FooData
 {
     protected static $mapper_options = [
-        'service'    => 'bar.service',
+        'service' => 'bar.service',
         'collection' => 'bar.collection',
     ];
     protected static $attributes = [

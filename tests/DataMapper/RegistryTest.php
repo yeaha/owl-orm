@@ -20,7 +20,7 @@ class RegistryTest extends \PHPUnit_Framework_TestCase
         $id = '710c825e-20ea-4c98-b313-30d9eec2b2dc';
 
         $class = $this->class;
-        $data  = new $class([
+        $data = new $class([
             'id' => $id,
         ]);
 

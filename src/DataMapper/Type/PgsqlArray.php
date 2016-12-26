@@ -54,7 +54,7 @@ class PgsqlArray extends Complex
 
                 $search = ['\\', "'", '"'];
                 $replace = ['\\\\', "''", '\"'];
-                $val = '"'.str_replace($search, $replace, $val).'"';
+                $val = '"' . str_replace($search, $replace, $val) . '"';
             }
 
             $array[$key] = $val;
@@ -119,8 +119,8 @@ class PgsqlArray extends Complex
 
         foreach ($array as $key => $val) {
             if ($val !== null) {
-                $search = array('\"', '\\\\');
-                $replace = array('"', '\\');
+                $search = ['\"', '\\\\'];
+                $replace = ['"', '\\'];
                 $array[$key] = str_replace($search, $replace, $val);
             }
         }

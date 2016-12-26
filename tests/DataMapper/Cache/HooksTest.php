@@ -24,11 +24,11 @@ class HooksTest extends \PHPUnit_Framework_TestCase
     public function test()
     {
         $this->setAttributes([
-            'id'  => ['type' => 'uuid', 'primary_key' => true],
+            'id' => ['type' => 'uuid', 'primary_key' => true],
             'foo' => ['type' => 'string'],
         ]);
 
-        $class  = $this->class;
+        $class = $this->class;
         $mapper = $class::getMapper();
 
         // cache "NOT FOUND"
@@ -40,13 +40,13 @@ class HooksTest extends \PHPUnit_Framework_TestCase
 
         // cache insert
         $data = new $class([
-            'id'  => $id,
+            'id' => $id,
             'foo' => 'FOO',
         ]);
         $data->save();
         $this->assertSame(
             [
-                'id'  => $id,
+                'id' => $id,
                 'foo' => 'FOO',
             ],
             $mapper->getCachedData(['id' => $id])
@@ -57,7 +57,7 @@ class HooksTest extends \PHPUnit_Framework_TestCase
         $data->save();
         $this->assertSame(
             [
-                'id'  => $id,
+                'id' => $id,
                 'foo' => 'bar',
             ],
             $mapper->getCachedData(['id' => $id])

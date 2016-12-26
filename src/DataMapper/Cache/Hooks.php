@@ -70,7 +70,7 @@ trait Hooks
     protected function __afterInsert(\Owl\DataMapper\Data $data)
     {
         $policy = $this->getCachePolicy();
-        $id     = $data->id(true);
+        $id = $data->id(true);
 
         if ($policy['insert']) {
             $record = $this->unpack($data);
@@ -92,7 +92,7 @@ trait Hooks
     protected function __afterUpdate(\Owl\DataMapper\Data $data)
     {
         $policy = $this->getCachePolicy();
-        $id     = $data->id(true);
+        $id = $data->id(true);
 
         if ($policy['update']) {
             $record = $this->unpack($data);
@@ -140,8 +140,8 @@ trait Hooks
     protected function getCachePolicy()
     {
         $defaults = [
-            'insert'    => false,
-            'update'    => false,
+            'insert' => false,
+            'update' => false,
             'not_found' => false,
         ];
 

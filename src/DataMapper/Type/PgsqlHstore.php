@@ -57,7 +57,7 @@ class PgsqlHstore extends Complex
                 $val = 'NULL';
             } else {
                 $val = rtrim($val, '\\');       // 以\结尾的字符串，无法用正则表达式解析
-                $val = '"'.str_replace($search, $replace, $val).'"';
+                $val = '"' . str_replace($search, $replace, $val) . '"';
             }
 
             $expr[] = sprintf('"%s"=>%s', $key, $val);

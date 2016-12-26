@@ -8,7 +8,7 @@ trait Apc
     protected function getCache(array $id)
     {
         $key = $this->getCacheKey($id);
-        $fn  = $this->getFn('fetch');
+        $fn = $this->getFn('fetch');
 
         return $fn($key) ?: [];
     }
@@ -16,7 +16,7 @@ trait Apc
     protected function deleteCache(array $id)
     {
         $key = $this->getCacheKey($id);
-        $fn  = $this->getFn('delete');
+        $fn = $this->getFn('delete');
 
         return $fn($key);
     }
@@ -25,7 +25,7 @@ trait Apc
     {
         $key = $this->getCacheKey($id);
         $ttl = $ttl ?: $this->getCacheTTL();
-        $fn  = $this->getFn('store');
+        $fn = $this->getFn('store');
 
         return $fn($key, $record, $ttl);
     }
