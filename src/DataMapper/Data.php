@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Owl\DataMapper;
 
 abstract class Data implements \JsonSerializable
@@ -249,7 +251,7 @@ abstract class Data implements \JsonSerializable
      *
      * @return $this
      */
-    final public function __pack(array $values, $replace)
+    final public function __pack(array $values, bool $replace)
     {
         $this->values = $replace ? $values : array_merge($this->values, $values);
         $this->dirty = [];
@@ -265,7 +267,7 @@ abstract class Data implements \JsonSerializable
      *
      * @return bool
      */
-    public function has($key)
+    public function has(string $key): bool
     {
         $mapper = static::getMapper();
 
@@ -289,7 +291,7 @@ abstract class Data implements \JsonSerializable
      * @throws \Owl\DataMapper\Exception\DeprecatedPropertyException      属性被标记为“废弃”
      * @throws \Owl\DataMapper\Exception\RefuseUpdatePropertyException    属性不允许更新修改
      */
-    public function set($key, $value, array $options = null)
+    public function set(string $key, $value, array $options = null): self
     {
         $defaults = ['force' => false, 'strict' => true];
         $options = $options ? array_merge($defaults, $options) : $defaults;
@@ -326,7 +328,7 @@ abstract class Data implements \JsonSerializable
      *
      * @return $this
      */
-    public function merge(array $values)
+    public function merge(array $values): self
     {
         foreach ($values as $key => $value) {
             $this->set($key, $value, ['strict' => false]);
@@ -345,7 +347,7 @@ abstract class Data implements \JsonSerializable
      * @throws \Owl\DataMapper\Exception\UndefinedPropertyException  如果属性未定义
      * @throws \Owl\DataMapper\Exception\DeprecatedPropertyException 属性被标记为“废弃”
      */
-    public function get($key)
+    public function get(string $key)
     {
         $attribute = $this->prepareGet($key);
         $type = Type::factory($attribute['type']);
@@ -370,7 +372,7 @@ abstract class Data implements \JsonSerializable
      *
      * @return $this
      */
-    public function setIn($key, $path, $value, $push = false)
+    public function setIn(string $key, $path, $value, bool $push = false): self
     {
         $this->prepareSet($key);
 
@@ -394,7 +396,7 @@ abstract class Data implements \JsonSerializable
      *
      * @return $this
      */
-    public function pushIn($key, $path, $value)
+    public function pushIn(string $key, $path, $value): self
     {
         return $this->setIn($key, $path, $value, true);
     }
@@ -405,7 +407,7 @@ abstract class Data implements \JsonSerializable
      *
      * @return $this
      */
-    public function unsetIn($key, $path)
+    public function unsetIn(string $key, $path): self
     {
         $this->prepareSet($key);
 
@@ -428,7 +430,7 @@ abstract class Data implements \JsonSerializable
      *
      * @return mixed|false
      */
-    public function getIn($key, $path)
+    public function getIn(string $key, $path)
     {
         $target = $this->get($key);
         $path = (array) $path;
@@ -455,7 +457,7 @@ abstract class Data implements \JsonSerializable
      * $data->pick(array('foo', 'bar'));
      * </code>
      */
-    public function pick($keys = null)
+    public function pick($keys = null): array
     {
         if ($keys === null) {
             $attributes = static::getMapper()->getAttributes();
@@ -485,7 +487,7 @@ abstract class Data implements \JsonSerializable
      *
      * @return mixed[]
      */
-    public function toJSON()
+    public function toJSON(): array
     {
         $mapper = static::getMapper();
         $json = [];
@@ -513,7 +515,7 @@ abstract class Data implements \JsonSerializable
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return $this->pick();
     }
@@ -523,7 +525,7 @@ abstract class Data implements \JsonSerializable
      *
      * @return bool
      */
-    public function isFresh()
+    public function isFresh(): bool
     {
         return $this->fresh;
     }
@@ -536,7 +538,7 @@ abstract class Data implements \JsonSerializable
      *
      * @return bool
      */
-    public function isDirty($key = null)
+    public function isDirty(string $key = null): bool
     {
         return $key === null
         ? (bool) $this->dirty
@@ -550,7 +552,7 @@ abstract class Data implements \JsonSerializable
      *
      * @return string|int|array
      */
-    public function id($as_array = false)
+    public function id(bool $as_array = false)
     {
         $keys = static::getMapper()->getPrimaryKey();
         $id = [];
@@ -572,7 +574,7 @@ abstract class Data implements \JsonSerializable
      *
      * @return $this
      */
-    public function refresh()
+    public function refresh(): self
     {
         return static::getMapper()->refresh($this);
     }
@@ -582,7 +584,7 @@ abstract class Data implements \JsonSerializable
      *
      * @return bool
      */
-    public function save()
+    public function save(): bool
     {
         return static::getMapper()->save($this);
     }
@@ -592,7 +594,7 @@ abstract class Data implements \JsonSerializable
      *
      * @return bool
      */
-    public function destroy()
+    public function destroy(): bool
     {
         return static::getMapper()->destroy($this);
     }
@@ -607,7 +609,7 @@ abstract class Data implements \JsonSerializable
      *
      * @throws \Owl\DataMapper\Exception\UnexpectedPropertyValueException
      */
-    public function validate()
+    public function validate(): bool
     {
         $attributes = static::getMapper()->getAttributes();
         $keys = $this->isFresh() ? array_keys($attributes) : array_keys($this->dirty);
@@ -631,7 +633,7 @@ abstract class Data implements \JsonSerializable
                     throw new Exception\UnexpectedPropertyValueException(sprintf('%s: Property "%s", mismatching pattern %s', get_class($this), $key, $attribute['regexp']));
                 }
 
-                if (!$attribute['allow_tags'] && \Owl\str_has_tags($value)) {
+                if (!$attribute['allow_tags'] && is_string($value) && \Owl\str_has_tags($value)) {
                     throw new Exception\UnexpectedPropertyValueException(sprintf('%s: Property "%s", cannot contain tags', get_class($this), $key));
                 }
 
@@ -657,7 +659,7 @@ abstract class Data implements \JsonSerializable
      *
      * @return mixed 格式化过后的值
      */
-    protected function normalize($key, $value, array $attribute)
+    protected function normalize(string $key, $value, array $attribute)
     {
         return Type::factory($attribute['type'])->normalize($value, $attribute);
     }
@@ -667,7 +669,7 @@ abstract class Data implements \JsonSerializable
      *
      * @return array
      */
-    protected function prepareSet($key, $force = false)
+    protected function prepareSet(string $key, bool $force = false): array
     {
         if (!$attribute = static::getMapper()->getAttribute($key)) {
             throw new Exception\UndefinedPropertyException(get_class($this) . ": Undefined property {$key}");
@@ -687,7 +689,7 @@ abstract class Data implements \JsonSerializable
      *
      * @return array
      */
-    protected function prepareGet($key)
+    protected function prepareGet(string $key): array
     {
         if (!$attribute = static::getMapper()->getAttribute($key)) {
             throw new Exception\UndefinedPropertyException(get_class($this) . ": Undefined property {$key}");
@@ -707,7 +709,7 @@ abstract class Data implements \JsonSerializable
      * @param mixed  $value
      * @param array  $attribute
      */
-    final protected function change($key, $value, array $attribute = null)
+    final protected function change(string $key, $value, array $attribute = null)
     {
         $attribute = $attribute ?: static::getMapper()->getAttribute($key);
         $type = Type::factory($attribute['type']);
@@ -747,7 +749,7 @@ abstract class Data implements \JsonSerializable
      *
      * @throws Exception\DataNotFoundException
      */
-    public static function findOrFail($id)
+    public static function findOrFail($id): self
     {
         if ($data = static::find($id)) {
             return $data;
@@ -763,7 +765,7 @@ abstract class Data implements \JsonSerializable
      *
      * @return static
      */
-    public static function findOrCreate($id)
+    public static function findOrCreate($id): self
     {
         if ($data = static::find($id)) {
             return $data;
@@ -779,7 +781,7 @@ abstract class Data implements \JsonSerializable
      *
      * @return Mapper
      */
-    final public static function getMapper()
+    final public static function getMapper(): Mapper
     {
         $class = static::$mapper;
 
@@ -798,7 +800,7 @@ abstract class Data implements \JsonSerializable
      *     'strict' => (boolean),
      * )
      */
-    final public static function getOptions()
+    final public static function getOptions(): array
     {
         $options = static::$mapper_options;
         $options['attributes'] = static::$attributes;

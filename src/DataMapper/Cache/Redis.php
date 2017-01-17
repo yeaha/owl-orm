@@ -1,11 +1,13 @@
 <?php
+declare(strict_types=1);
+
 namespace Owl\DataMapper\Cache;
 
 trait Redis
 {
     use Hooks;
 
-    protected function getCache(array $id)
+    protected function getCache(array $id): array
     {
         $key = $this->getCacheKey($id);
         $redis = $this->getCacheService($key);
@@ -25,7 +27,7 @@ trait Redis
         }
     }
 
-    protected function deleteCache(array $id)
+    protected function deleteCache(array $id): bool
     {
         $key = $this->getCacheKey($id);
         $redis = $this->getCacheService($key);
@@ -33,7 +35,7 @@ trait Redis
         return $redis->delete($key);
     }
 
-    protected function saveCache(array $id, array $record, $ttl = null)
+    protected function saveCache(array $id, array $record, $ttl = null): bool
     {
         $key = $this->getCacheKey($id);
         $redis = $this->getCacheService($key);

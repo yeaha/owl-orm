@@ -1,11 +1,13 @@
 <?php
+declare(strict_types=1);
+
 namespace Owl\DataMapper\Cache;
 
 trait Apc
 {
     use Hooks;
 
-    protected function getCache(array $id)
+    protected function getCache(array $id): array
     {
         $key = $this->getCacheKey($id);
         $fn = $this->getFn('fetch');
@@ -13,7 +15,7 @@ trait Apc
         return $fn($key) ?: [];
     }
 
-    protected function deleteCache(array $id)
+    protected function deleteCache(array $id): bool
     {
         $key = $this->getCacheKey($id);
         $fn = $this->getFn('delete');
@@ -21,7 +23,7 @@ trait Apc
         return $fn($key);
     }
 
-    protected function saveCache(array $id, array $record, $ttl = null)
+    protected function saveCache(array $id, array $record, int $ttl = null): bool
     {
         $key = $this->getCacheKey($id);
         $ttl = $ttl ?: $this->getCacheTTL();
@@ -30,7 +32,7 @@ trait Apc
         return $fn($key, $record, $ttl);
     }
 
-    private function getFn($method)
+    private function getFn(string $method): string
     {
         static $prefix;
 

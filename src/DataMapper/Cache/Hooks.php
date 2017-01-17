@@ -1,6 +1,4 @@
 <?php
-namespace Owl\DataMapper\Cache;
-
 /**
  * @example
  * class MyMapper extends \Owl\DataMapper\DB\Mapper {
@@ -37,21 +35,28 @@ namespace Owl\DataMapper\Cache;
  *     ];
  * }
  */
+declare(strict_types=1);
+
+namespace Owl\DataMapper\Cache;
+
+use Owl\DataMapper\Data;
+use Owl\Service;
+
 trait Hooks
 {
     /**
      * @param mixed $id
      *
-     * @return array|false
+     * @return array
      */
-    abstract protected function getCache(array $id);
+    abstract protected function getCache(array $id): array;
 
     /**
      * @param mixed $id
      *
      * @return bool
      */
-    abstract protected function deleteCache(array $id);
+    abstract protected function deleteCache(array $id): bool;
 
     /**
      * @param mixed $id
@@ -60,14 +65,14 @@ trait Hooks
      *
      * @return bool
      */
-    abstract protected function saveCache(array $id, array $record, $ttl = null);
+    abstract protected function saveCache(array $id, array $record, int $ttl = null): bool;
 
     /**
      * create cache after save new data, if cache policy set.
      *
      * @param \Owl\DataMapper\Data $data
      */
-    protected function __afterInsert(\Owl\DataMapper\Data $data)
+    protected function __afterInsert(Data $data)
     {
         $policy = $this->getCachePolicy();
         $id = $data->id(true);
@@ -89,7 +94,7 @@ trait Hooks
      *
      * @param \Owl\DataMapper\Data $data
      */
-    protected function __afterUpdate(\Owl\DataMapper\Data $data)
+    protected function __afterUpdate(Data $data)
     {
         $policy = $this->getCachePolicy();
         $id = $data->id(true);
@@ -111,7 +116,7 @@ trait Hooks
      *
      * @param \Owl\DataMapper\Data $data
      */
-    protected function __afterDelete(\Owl\DataMapper\Data $data)
+    protected function __afterDelete(Data $data)
     {
         $this->deleteCache($data->id(true));
 
@@ -125,7 +130,7 @@ trait Hooks
      *
      * @return \Owl\DataMapper\Data
      */
-    public function refresh(\Owl\DataMapper\Data $data)
+    public function refresh(Data $data): Data
     {
         $this->deleteCache($data->id(true));
 
@@ -134,10 +139,8 @@ trait Hooks
 
     /**
      * 获得缓存策略配置.
-     *
-     * @return int
      */
-    protected function getCachePolicy()
+    protected function getCachePolicy(): array
     {
         $defaults = [
             'insert' => false,
@@ -171,7 +174,7 @@ trait Hooks
      *
      * @return array
      */
-    protected function doFind(array $id, \Owl\Service $service = null, $collection = null)
+    protected function doFind(array $id, Service $service = null, string $collection = null): array
     {
         if ($record = $this->getCache($id)) {
             return isset($record['__IS_NOT_FOUND__']) ? false : $record;
@@ -197,11 +200,11 @@ trait Hooks
      *
      * @return object
      */
-    protected function getCacheService($key)
+    protected function getCacheService(string $key): Service
     {
         $service_name = $this->getOption('cache_service');
 
-        return \Owl\Service\get($service_name, $key);
+        return Service\get($service_name, $key);
     }
 
     /**
@@ -209,7 +212,7 @@ trait Hooks
      *
      * @return string
      */
-    protected function getCacheKey(array $id)
+    protected function getCacheKey(array $id): string
     {
         $prefix = $this->hasOption('cache_key')
         ? $this->getOption('cache_key')
@@ -236,7 +239,7 @@ trait Hooks
     /**
      * @return int
      */
-    protected function getCacheTTL()
+    protected function getCacheTTL(): int
     {
         return $this->hasOption('cache_ttl') ? $this->getOption('cache_ttl') : 300;
     }
@@ -248,7 +251,7 @@ trait Hooks
      *
      * @return array
      */
-    private function removeNullValues(array $record)
+    private function removeNullValues(array $record): array
     {
         // 值为NULL的字段不用缓存
         foreach ($record as $key => $val) {

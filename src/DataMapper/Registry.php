@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Owl\DataMapper;
 
 class Registry
@@ -40,7 +42,7 @@ class Registry
      *
      * @return bool
      */
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return $this->enabled;
     }
@@ -77,7 +79,7 @@ class Registry
      *
      * @return Data|false
      */
-    public function get($class, array $id)
+    public function get(string $class, array $id)
     {
         if (!$this->isEnabled()) {
             return false;
@@ -85,25 +87,21 @@ class Registry
 
         $key = self::key($class, $id);
 
-        return isset($this->members[$key])
-        ? $this->members[$key]
-        : false;
+        return $this->members[$key] ?? false;
     }
 
     /**
      * 删除缓存结果.
      *
      * @param string $class
-     * @param mixed  $id
+     * @param array  $id
      */
-    public function remove($class, array $id)
+    public function remove(string $class, array $id)
     {
-        if (!$this->isEnabled()) {
-            return false;
+        if ($this->isEnabled()) {
+            $key = self::key($class, $id);
+            unset($this->members[$key]);
         }
-
-        $key = self::key($class, $id);
-        unset($this->members[$key]);
     }
 
     /**
@@ -122,7 +120,7 @@ class Registry
      *
      * @return string
      */
-    private static function key($class, array $id)
+    private static function key(string $class, array $id): string
     {
         $class = strtolower(ltrim($class, '\\'));
         ksort($id);

@@ -1,9 +1,12 @@
 <?php
 namespace Owl\DataMapper\DB;
 
+use Owl\DataMapper\Data;
+use Owl\Service;
+
 class Mapper extends \Owl\DataMapper\Mapper
 {
-    public function select(\Owl\Service $service = null, $collection = null)
+    public function select(Service $service = null, string $collection = null)
     {
         $service = $service ?: $this->getService();
         $collection = $collection ?: $this->getCollection();
@@ -26,7 +29,7 @@ class Mapper extends \Owl\DataMapper\Mapper
         return $select;
     }
 
-    public function getBySQLAsIterator($sql, array $parameters = [], \Owl\Service $service = null)
+    public function getBySQLAsIterator(string $sql, array $parameters = [], Service $service = null)
     {
         $service = $service ?: $this->getService();
         $res = $service->execute($sql, $parameters);
@@ -36,7 +39,7 @@ class Mapper extends \Owl\DataMapper\Mapper
         }
     }
 
-    protected function doFind(array $id, \Owl\Service $service = null, $collection = null)
+    protected function doFind(array $id, Service $service = null, string $collection = null): array
     {
         $service = $service ?: $this->getService();
         $collection = $collection ?: $this->getCollection();
@@ -49,14 +52,14 @@ class Mapper extends \Owl\DataMapper\Mapper
         return $select->limit(1)->execute()->fetch();
     }
 
-    protected function doInsert(\Owl\DataMapper\Data $data, \Owl\Service $service = null, $collection = null)
+    protected function doInsert(Data $data, Service $service = null, string $collection = null): array
     {
         $service = $service ?: $this->getService();
         $collection = $collection ?: $this->getCollection();
         $record = $this->unpack($data);
 
         if (!$service->insert($collection, $record)) {
-            return false;
+            throw new \Exception("{$this->class}: Insert failed");
         }
 
         $id = [];
@@ -72,7 +75,7 @@ class Mapper extends \Owl\DataMapper\Mapper
         return $id;
     }
 
-    protected function doUpdate(\Owl\DataMapper\Data $data, \Owl\Service $service = null, $collection = null)
+    protected function doUpdate(Data $data, Service $service = null, string $collection = null): bool
     {
         $service = $service ?: $this->getService();
         $collection = $collection ?: $this->getCollection();
@@ -80,20 +83,20 @@ class Mapper extends \Owl\DataMapper\Mapper
 
         list($where, $params) = $this->whereID($service, $data->id(true));
 
-        return $service->update($collection, $record, $where, $params);
+        return (bool) $service->update($collection, $record, $where, $params);
     }
 
-    protected function doDelete(\Owl\DataMapper\Data $data, \Owl\Service $service = null, $collection = null)
+    protected function doDelete(Data $data, Service $service = null, $collection = null): bool
     {
         $service = $service ?: $this->getService();
         $collection = $collection ?: $this->getCollection();
 
         list($where, $params) = $this->whereID($service, $data->id(true));
 
-        return $service->delete($collection, $where, $params);
+        return (bool) $service->delete($collection, $where, $params);
     }
 
-    protected function whereID(\Owl\Service $service, array $id)
+    protected function whereID(Service $service, array $id)
     {
         $where = $params = [];
         $primary_key = $this->getPrimaryKey();

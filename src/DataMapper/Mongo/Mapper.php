@@ -1,6 +1,9 @@
 <?php
 namespace Owl\DataMapper\Mongo;
 
+use Owl\DataMapper\Data;
+use Owl\Service;
+
 class Mapper extends \Owl\DataMapper\Mapper
 {
     public function query($expr)
@@ -33,7 +36,7 @@ class Mapper extends \Owl\DataMapper\Mapper
         }
     }
 
-    public function pack(array $record, \Owl\DataMapper\Data $data = null)
+    public function pack(array $record, Data $data = null): Data
     {
         if (isset($record['_id'])) {
             $record['_id'] = (string) $record['_id'];
@@ -42,7 +45,7 @@ class Mapper extends \Owl\DataMapper\Mapper
         return parent::pack($record, $data);
     }
 
-    public function unpack(\Owl\DataMapper\Data $data, array $options = null)
+    public function unpack(Data $data, array $options = null): array
     {
         $record = parent::unpack($data, $options);
 
@@ -53,7 +56,7 @@ class Mapper extends \Owl\DataMapper\Mapper
         return $record;
     }
 
-    protected function doFind(array $id, \Owl\Service $service = null, $collection = null)
+    protected function doFind(array $id, Service $service = null, string $collection = null): array
     {
         $service = $service ?: $this->getService();
         $collection = $collection ?: $this->getCollection();
@@ -61,7 +64,7 @@ class Mapper extends \Owl\DataMapper\Mapper
         return $service->findOne($collection, ['_id' => $this->normalizeIDValue($id)]);
     }
 
-    protected function doInsert(\Owl\DataMapper\Data $data, \Owl\Service $service = null, $collection = null)
+    protected function doInsert(Data $data, Service $service = null, string $collection = null): array
     {
         $service = $service ?: $this->getService();
         $collection = $collection ?: $this->getCollection();
@@ -76,7 +79,7 @@ class Mapper extends \Owl\DataMapper\Mapper
         ];
     }
 
-    protected function doUpdate(\Owl\DataMapper\Data $data, \Owl\Service $service = null, $collection = null)
+    protected function doUpdate(Data $data, Service $service = null, string $collection = null): bool
     {
         $service = $service ?: $this->getService();
         $collection = $collection ?: $this->getCollection();
@@ -102,7 +105,7 @@ class Mapper extends \Owl\DataMapper\Mapper
         return $service->update($collection, ['_id' => $this->normalizeIDValue($data)], $new);
     }
 
-    protected function doDelete(\Owl\DataMapper\Data $data, \Owl\Service $service = null, $collection = null)
+    protected function doDelete(Data $data, Service $service = null, string $collection = null): bool
     {
         $service = $service ?: $this->getService();
         $collection = $collection ?: $this->getCollection();
@@ -110,7 +113,7 @@ class Mapper extends \Owl\DataMapper\Mapper
         return $service->remove($collection, ['_id' => $this->normalizeIDValue($data)]);
     }
 
-    protected function normalizeOptions(array $options)
+    protected function normalizeOptions(array $options): array
     {
         $options = parent::normalizeOptions($options);
 

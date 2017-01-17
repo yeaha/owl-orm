@@ -25,7 +25,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
 
     public function testCommon()
     {
-        $type = $this->getType(null);
+        $type = $this->getType('');
         $this->assertInstanceOf('\Owl\DataMapper\Type\Common', $type);
 
         $type = $this->getType('undefined type name');

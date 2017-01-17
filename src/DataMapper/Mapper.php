@@ -1,5 +1,9 @@
 <?php
+declare(strict_types=1);
+
 namespace Owl\DataMapper;
+
+use Owl\Service;
 
 abstract class Mapper
 {
@@ -26,7 +30,7 @@ abstract class Mapper
      *
      * @return array 数据结果
      */
-    abstract protected function doFind(array $id, \Owl\Service $service = null, $collection = null);
+    abstract protected function doFind(array $id, Service $service = null, string $collection = null): array;
 
     /**
      * 插入数据到存储服务
@@ -37,7 +41,7 @@ abstract class Mapper
      *
      * @return array 新的主键值
      */
-    abstract protected function doInsert(\Owl\DataMapper\Data $data, \Owl\Service $service = null, $collection = null);
+    abstract protected function doInsert(Data $data, Service $service = null, string $collection = null): array;
 
     /**
      * 更新数据到存储服务
@@ -48,7 +52,7 @@ abstract class Mapper
      *
      * @return bool
      */
-    abstract protected function doUpdate(\Owl\DataMapper\Data $data, \Owl\Service $service = null, $collection = null);
+    abstract protected function doUpdate(Data $data, Service $service = null, string $collection = null): bool;
 
     /**
      * 从存储服务删除数据.
@@ -59,57 +63,57 @@ abstract class Mapper
      *
      * @return bool
      */
-    abstract protected function doDelete(\Owl\DataMapper\Data $data, \Owl\Service $service = null, $collection = null);
+    abstract protected function doDelete(Data $data, Service $service = null, string $collection = null): bool;
 
     /**
      * @param string $class
      */
-    public function __construct($class)
+    public function __construct(string $class)
     {
         $this->class = $class;
         $this->options = array_merge($this->normalizeOptions($class::getOptions()), $this->options);
     }
 
-    protected function __beforeSave(\Owl\DataMapper\Data $data)
+    protected function __beforeSave(Data $data)
     {
     }
 
-    protected function __afterSave(\Owl\DataMapper\Data $data)
+    protected function __afterSave(Data $data)
     {
     }
 
-    protected function __beforeInsert(\Owl\DataMapper\Data $data)
+    protected function __beforeInsert(Data $data)
     {
     }
 
-    protected function __afterInsert(\Owl\DataMapper\Data $data)
+    protected function __afterInsert(Data $data)
     {
     }
 
-    protected function __beforeUpdate(\Owl\DataMapper\Data $data)
+    protected function __beforeUpdate(Data $data)
     {
     }
 
-    protected function __afterUpdate(\Owl\DataMapper\Data $data)
+    protected function __afterUpdate(Data $data)
     {
     }
 
-    protected function __beforeDelete(\Owl\DataMapper\Data $data)
+    protected function __beforeDelete(Data $data)
     {
     }
 
-    protected function __afterDelete(\Owl\DataMapper\Data $data)
+    protected function __afterDelete(Data $data)
     {
     }
 
-    final private function __before($event, \Owl\DataMapper\Data $data)
+    final private function __before(string $event, Data $data)
     {
         $event = ucfirst($event);
         call_user_func([$data, '__before' . $event]);
         call_user_func([$this, '__before' . $event], $data);
     }
 
-    final private function __after($event, \Owl\DataMapper\Data $data)
+    final private function __after(string $event, Data $data)
     {
         $event = ucfirst($event);
         call_user_func([$data, '__after' . $event]);
@@ -123,7 +127,7 @@ abstract class Mapper
      *
      * @return bool
      */
-    public function hasOption($key)
+    public function hasOption(string $key): bool
     {
         return isset($this->options[$key]);
     }
@@ -137,7 +141,7 @@ abstract class Mapper
      *
      * @throws \RuntimeException 指定的配置不存在
      */
-    public function getOption($key)
+    public function getOption(string $key)
     {
         if (!isset($this->options[$key])) {
             throw new \RuntimeException('Mapper: undefined option "' . $key . '"');
@@ -151,7 +155,7 @@ abstract class Mapper
      *
      * @return array
      */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->options;
     }
@@ -163,11 +167,11 @@ abstract class Mapper
      *
      * @throws \RuntimeException Data class没有配置存储服务
      */
-    public function getService()
+    public function getService(): Service
     {
         $service = $this->getOption('service');
 
-        return \Owl\Service\Container::getInstance()->get($service);
+        return Service\Container::getInstance()->get($service);
     }
 
     /**
@@ -178,7 +182,7 @@ abstract class Mapper
      *
      * @throws \RuntimeException 存储集合名未配置
      */
-    public function getCollection()
+    public function getCollection(): string
     {
         return $this->getOption('collection');
     }
@@ -192,7 +196,7 @@ abstract class Mapper
      *     ...
      * ]
      */
-    public function getPrimaryKey()
+    public function getPrimaryKey(): array
     {
         return $this->getOption('primary_key');
     }
@@ -204,11 +208,9 @@ abstract class Mapper
      *
      * @return array|false
      */
-    public function getAttribute($key)
+    public function getAttribute(string $key)
     {
-        return isset($this->options['attributes'][$key])
-        ? $this->options['attributes'][$key]
-        : false;
+        return $this->options['attributes'][$key] ?? false;
     }
 
     /**
@@ -217,12 +219,14 @@ abstract class Mapper
      *
      * @param bool $without_deprecated 不包含废弃属性
      *
-     * @return [
-     *           (string) => (array),  // 属性名 => 属性定义
-     *           ...
-     *           ]
+     * @return array
+     *
+     * [
+     *     (string) => (array),  // 属性名 => 属性定义
+     *     ...
+     * ]
      */
-    public function getAttributes($without_deprecated = true)
+    public function getAttributes(bool $without_deprecated = true): array
     {
         $attributes = $this->getOption('attributes');
 
@@ -245,7 +249,7 @@ abstract class Mapper
      *
      * @return bool
      */
-    public function hasAttribute($key)
+    public function hasAttribute(string $key): bool
     {
         $attribute = $this->getAttribute($key);
 
@@ -257,9 +261,9 @@ abstract class Mapper
      *
      * @return bool
      */
-    public function isReadonly()
+    public function isReadonly(): bool
     {
-        return $this->getOption('readonly');
+        return (bool) $this->getOption('readonly');
     }
 
     /**
@@ -270,7 +274,7 @@ abstract class Mapper
      *
      * @return Data
      */
-    public function pack(array $record, Data $data = null)
+    public function pack(array $record, Data $data = null): Data
     {
         $types = Type::getInstance();
         $values = [];
@@ -305,7 +309,7 @@ abstract class Mapper
      *
      * @return array
      */
-    public function unpack(Data $data, array $options = null)
+    public function unpack(Data $data, array $options = null): array
     {
         $defaults = ['dirty' => false];
         $options = $options ? array_merge($defaults, $options) : $defaults;
@@ -365,7 +369,7 @@ abstract class Mapper
      *
      * @return Data
      */
-    public function refresh(Data $data)
+    public function refresh(Data $data): Data
     {
         if ($data->isFresh()) {
             return $data;
@@ -381,7 +385,7 @@ abstract class Mapper
      *
      * @return bool
      */
-    public function save(Data $data)
+    public function save(Data $data): bool
     {
         if ($this->isReadonly()) {
             throw new \RuntimeException($this->class . ' is readonly');
@@ -411,7 +415,7 @@ abstract class Mapper
      *
      * @return bool
      */
-    public function destroy(Data $data)
+    public function destroy(Data $data): bool
     {
         if ($this->isReadonly()) {
             throw new \RuntimeException($this->class . ' is readonly');
@@ -441,7 +445,7 @@ abstract class Mapper
      *
      * @return array
      */
-    public function normalizeID($id)
+    public function normalizeID($id): array
     {
         $primary_keys = $this->getPrimaryKey();
 
@@ -469,7 +473,7 @@ abstract class Mapper
      *
      * @return bool
      */
-    protected function insert(Data $data)
+    protected function insert(Data $data): bool
     {
         $this->__before('insert', $data);
         $data->validate();
@@ -491,7 +495,7 @@ abstract class Mapper
      *
      * @return bool
      */
-    protected function update(Data $data)
+    protected function update(Data $data): bool
     {
         $this->__before('update', $data);
         $data->validate();
@@ -513,7 +517,7 @@ abstract class Mapper
      *
      * @return array
      */
-    protected function normalizeOptions(array $options)
+    protected function normalizeOptions(array $options): array
     {
         $options = array_merge([
             'service' => null,
@@ -561,7 +565,7 @@ abstract class Mapper
      *
      * @return Mapper
      */
-    final public static function factory($class)
+    final public static function factory(string $class): self
     {
         if (!isset(self::$instance[$class])) {
             self::$instance[$class] = new static($class);

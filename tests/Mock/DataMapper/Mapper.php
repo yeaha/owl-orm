@@ -1,6 +1,7 @@
 <?php
 namespace Tests\Mock\DataMapper;
 
+use Owl\DataMapper\Data;
 use Owl\Service;
 
 class Mapper extends \Owl\DataMapper\Mapper
@@ -13,15 +14,15 @@ class Mapper extends \Owl\DataMapper\Mapper
         $this->options = $this->normalizeOptions($options);
     }
 
-    protected function doFind(array $id, Service $service = null, $collection = null)
+    protected function doFind(array $id, Service $service = null, string $collection = null): array
     {
         $service = $service ?: $this->getService();
         $collection = $collection ?: $this->getCollection();
 
-        return $service->find($collection, $id);
+        return $service->find($collection, $id) ?: [];
     }
 
-    protected function doInsert(\Owl\DataMapper\Data $data, Service $service = null, $collection = null)
+    protected function doInsert(Data $data, Service $service = null, string $collection = null): array
     {
         $service = $service ?: $this->getService();
         $collection = $collection ?: $this->getCollection();
@@ -44,7 +45,7 @@ class Mapper extends \Owl\DataMapper\Mapper
         return $id;
     }
 
-    protected function doUpdate(\Owl\DataMapper\Data $data, Service $service = null, $collection = null)
+    protected function doUpdate(Data $data, Service $service = null, string $collection = null): bool
     {
         $service = $service ?: $this->getService();
         $collection = $collection ?: $this->getCollection();
@@ -53,7 +54,7 @@ class Mapper extends \Owl\DataMapper\Mapper
         return $service->update($collection, $record, $data->id(true));
     }
 
-    protected function doDelete(\Owl\DataMapper\Data $data, Service $service = null, $collection = null)
+    protected function doDelete(Data $data, Service $service = null, string $collection = null): bool
     {
         $service = $service ?: $this->getService();
         $collection = $collection ?: $this->getCollection();

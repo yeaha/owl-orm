@@ -1,6 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace Owl\DataMapper;
+
+use Owl\DataMapper\Type\Common;
 
 class Type
 {
@@ -25,7 +28,7 @@ class Type
      *
      * @return object 数据类型helper实例
      */
-    public function get($type)
+    public function get(string $type): Common
     {
         $type = strtolower($type);
 
@@ -58,7 +61,7 @@ class Type
      *
      * @return $this
      */
-    public function register($type, $class)
+    public function register(string $type, string $class): self
     {
         $type = strtolower($type);
         $this->type_classes[$type] = $class;
@@ -73,7 +76,7 @@ class Type
      *
      * @return object
      */
-    public static function factory($name)
+    public static function factory(string $name): Common
     {
         return static::getInstance()->get($name);
     }
@@ -85,7 +88,7 @@ class Type
      *
      * @return array
      */
-    public static function normalizeAttribute(array $attribute)
+    public static function normalizeAttribute(array $attribute): array
     {
         $defaults = [
             // 是否允许为空
@@ -105,7 +108,7 @@ class Type
             'deprecated' => false,
 
             // 正则表达式检查
-            'regexp' => null,
+            'regexp' => '',
 
             // 是否主键
             'primary_key' => false,
@@ -124,10 +127,10 @@ class Type
             'strict' => null,
 
             // 数据类型
-            'type' => null,
+            'type' => '',
         ];
 
-        $type = isset($attribute['type']) ? $attribute['type'] : null;
+        $type = $attribute['type'] ?? '';
 
         if (isset($attribute['pattern'])) {
             $attribute['regexp'] = $attribute['pattern'];
@@ -158,7 +161,7 @@ class Type
 
     private static $instance;
 
-    public static function getInstance()
+    public static function getInstance(): self
     {
         return self::$instance ?: (self::$instance = new self());
     }

@@ -5,18 +5,18 @@ class CacheMapper extends Mapper
 {
     use Cache\Memory;
 
-    public function hasCached(array $id)
+    public function hasCached(array $id): bool
     {
         $key = $this->getCacheKey($id);
 
         return isset(static::$__cache__[$key]);
     }
 
-    public function getCachedData(array $id)
+    public function getCachedData(array $id): array
     {
         $key = $this->getCacheKey($id);
 
-        return static::$__cache__[$key] ?? false;
+        return static::$__cache__[$key] ?? [];
     }
 
     public function clearCachedData()
@@ -24,7 +24,7 @@ class CacheMapper extends Mapper
         static::$__cache__ = [];
     }
 
-    protected function getCachePolicy()
+    protected function getCachePolicy(): array
     {
         return [
             'insert' => true,
