@@ -131,6 +131,15 @@ class TypeTest extends \PHPUnit_Framework_TestCase
         $this->assertSame([], $type->getDefaultValue(['allow_null' => true]));
     }
 
+    public function testComplexValuesTrim()
+    {
+        $type = $this->getType('json');
+
+        $values = ['foo' => null, 'bar' => 1];
+        $this->assertSame('{"bar":1}', $type->store($values, ['trim_values' => true]));
+        $this->assertSame('{"foo":null,"bar":1}', $type->store($values, ['trim_values' => false]));
+    }
+
     public function testRestoreNull()
     {
         $expect = [

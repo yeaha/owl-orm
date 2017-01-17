@@ -40,12 +40,15 @@ class Complex extends Common
     {
         return array_merge([
             'schema' => [],
+            'trim_values' => true,
         ], $attribute);
     }
 
     public function store($value, array $attribute)
     {
-        if ($value) {
+        $trim_values = $attribute['trim_values'] ?? true;
+
+        if ($value && $trim_values) {
             $value = \Owl\array_trim($value);
         }
 
