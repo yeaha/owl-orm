@@ -283,7 +283,7 @@ abstract class Data implements \JsonSerializable
      *
      * @return $this
      *
-     * @throws \Owl\DataMapper\Exception\UndefinedPropertyException 如果属性未定义
+     * @throws \Owl\DataMapper\Exception\UndefinedPropertyException       如果属性未定义
      * @throws \Owl\DataMapper\Exception\UnexpectedPropertyValueException 把null赋值给一个不允许为null的属性
      * @throws \Owl\DataMapper\Exception\UnexpectedPropertyValueException 值没有通过设定的正则表达式检查
      * @throws \Owl\DataMapper\Exception\DeprecatedPropertyException      属性被标记为“废弃”
@@ -631,7 +631,7 @@ abstract class Data implements \JsonSerializable
                     throw new Exception\UnexpectedPropertyValueException(sprintf('%s: Property "%s", mismatching pattern %s', get_class($this), $key, $attribute['regexp']));
                 }
 
-                if (!$attribute['allow_tags'] && \Owl\str_has_tags($value)) {
+                if (!$attribute['allow_tags'] && is_string($value) && \Owl\str_has_tags($value)) {
                     throw new Exception\UnexpectedPropertyValueException(sprintf('%s: Property "%s", cannot contain tags', get_class($this), $key));
                 }
 
