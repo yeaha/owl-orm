@@ -46,11 +46,7 @@ class Complex extends Common
 
     public function store($value, array $attribute)
     {
-        $trim_values = $attribute['trim_values'] ?? true;
-
-        if ($value && $trim_values) {
-            $value = \Owl\array_trim($value);
-        }
+        $value = $this->trimValue($value, $attribute);
 
         return $this->isNull($value) ? null : $value;
     }
@@ -75,9 +71,20 @@ class Complex extends Common
     public function validateValue($value, array $attribute)
     {
         if ($attribute['schema']) {
-            $value = \Owl\array_trim($value);
+            $value = $this->trimValue($value, $attribute);
 
             (new \Owl\Parameter\Validator())->execute($value, $attribute['schema']);
         }
+    }
+
+    private function trimValue($value, array $attribute)
+    {
+        $trim_values = $attribute['trim_values'] ?? true;
+
+        if ($value && $trim_values && is_array($value)) {
+            $value = \Owl\array_trim($value);
+        }
+
+        return $value;
     }
 }
