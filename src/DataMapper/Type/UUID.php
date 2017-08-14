@@ -43,12 +43,10 @@ class UUID extends Common
                 mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
             );
         } else {
-            return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-                random_int(0, 0xffff), random_int(0, 0xffff), random_int(0, 0xffff),
-                random_int(0, 0x0fff) | 0x4000,
-                random_int(0, 0x3fff) | 0x8000,
-                random_int(0, 0xffff), random_int(0, 0xffff), random_int(0, 0xffff)
-            );
+            $uuid = bin2hex(random_bytes(18));
+            $uuid[8] = $uuid[13] = $uuid[18] = $uuid[23] = '-';
+
+            return $uuid;
         }
     }
 }
