@@ -16,6 +16,9 @@
         "yeaha/owl-core": "1.0.*",
         "yeaha/owl-service": "1.0.*"
     },
+    "require-dev": {
+        "phpunit/phpunit": "5.7.*"
+    },
     "autoload": {
         "psr-4": {"Owl\\DataMapper\\": "src/DataMapper/"}
     },
