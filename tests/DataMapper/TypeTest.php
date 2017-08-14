@@ -79,7 +79,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
         $attribute = $type->normalizeAttribute(['primary_key' => true]);
         $this->assertTrue($attribute['auto_generate']);
 
-        $re = '/^[0-9A-F\-]{36}$/';
+        $re = '/^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$/';
         $this->assertRegExp($re . 'i', $type->getDefaultValue(['auto_generate' => true]));
         $this->assertRegExp($re, $type->getDefaultValue(['auto_generate' => true, 'upper' => true]));
     }
