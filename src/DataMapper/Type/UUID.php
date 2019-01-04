@@ -45,6 +45,7 @@ class UUID extends Common
         } else {
             $uuid = bin2hex(random_bytes(18));
             $uuid[8] = $uuid[13] = $uuid[18] = $uuid[23] = '-';
+            $uuid[14] = '4';
 
             return $uuid;
         }
