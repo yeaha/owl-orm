@@ -1,8 +1,12 @@
 <?php
+
 namespace Owl\DataMapper\DB;
 
 class Mapper extends \Owl\DataMapper\Mapper
 {
+    /**
+     * @return \Owl\DataMapper\DB\Select
+     */
     public function select(\Owl\Service $service = null, $collection = null)
     {
         $service = $service ?: $this->getService();
@@ -10,7 +14,7 @@ class Mapper extends \Owl\DataMapper\Mapper
         $primary_key = $this->getPrimaryKey();
 
         // 只有一个主键，就可以返回以主键为key的数组结果
-        if (count($primary_key) === 1) {
+        if (1 === count($primary_key)) {
             $select = new \Owl\DataMapper\DB\Select($service, $collection);
         } else {
             $select = new \Owl\Service\DB\Select($service, $collection);

@@ -1,4 +1,5 @@
 <?php
+
 namespace Owl\DataMapper\DB;
 
 /**
@@ -8,11 +9,17 @@ class Data extends \Owl\DataMapper\Data
 {
     protected static $mapper = '\Owl\DataMapper\DB\Mapper';
 
+    /**
+     * @return \Owl\DataMapper\DB\Select
+     */
     public static function select()
     {
         return static::getMapper()->select();
     }
 
+    /**
+     * @return \Owl\DataMapper\DB\Data[]
+     */
     public static function getBySQL($sql, array $parameters = [], \Owl\Service $service = null)
     {
         $result = [];
